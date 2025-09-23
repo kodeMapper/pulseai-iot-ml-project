@@ -34,10 +34,20 @@ Note: If your labeling differs, adjust the mapping in the notebook where predict
 Prerequisites:
 - Python 3.9+ (recommended) and pip
 
-Create and activate a virtual environment, then install dependencies:
+Create and activate a virtual environment, then install dependencies.
+
+Preferred (reproducible): install from the provided `requirements.txt`:
 
 ```powershell
-py -3 -V
+py -3 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Minimal (only core packages if you prefer smaller environment):
+
+```powershell
 py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
