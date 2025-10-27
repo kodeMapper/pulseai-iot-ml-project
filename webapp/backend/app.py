@@ -42,6 +42,55 @@ model = None
 scaler = None
 feature_names = None
 risk_map = None
+DEFAULT_MODEL_METRICS = {
+    "test_accuracy": "90.6%",
+    "high_risk_false_negative_rate": "13.0%"
+}
+
+
+def clone_model_metrics():
+    """Return a fresh copy of the default model metrics dict."""
+    return dict(DEFAULT_MODEL_METRICS)
+
+
+def update_patient_summary(patient_id, risk_level, timestamp, model_metrics=None):
+    """Persist the latest risk summary details for the patient document."""
+    if not patient_id:
+        return
+
+    update_fields = {}
+
+    if risk_level:
+        update_fields['risk_level'] = risk_level
+
+    if timestamp:
+        update_fields['last_check_in'] = timestamp
+
+    if model_metrics:
+        update_fields['last_model_metrics'] = model_metrics
+
+    if not update_fields:
+        return
+
+    patients_collection = mongo.db.patients
+    try:
+        patients_collection.update_one(
+            {'_id': ObjectId(patient_id)},
+            {'$set': update_fields}
+        )
+    except Exception:
+        logging.exception("Failed to update patient summary for %s", patient_id)
+
+
+def get_latest_reading(patient_id_str):
+    """Fetch the most recent reading for a patient."""
+    if not patient_id_str:
+        return None
+    readings_collection = mongo.db.readings
+    return readings_collection.find_one(
+        {'patient_id': patient_id_str},
+        sort=[('timestamp', -1)]
+    )
 
 
 def load_model_assets(force_reload=False):
@@ -157,26 +206,27 @@ def run_prediction(patient_id):
     
     # 4. Store the new reading in the database
     readings_collection = mongo.db.readings
+    model_metrics = clone_model_metrics()
+    reading_timestamp = datetime.datetime.utcnow()
     db_reading = new_reading_data.copy()
     db_reading['patient_id'] = patient_id
-    db_reading['timestamp'] = datetime.datetime.utcnow()
+    db_reading['timestamp'] = reading_timestamp
     db_reading['risk_level'] = risk_level
-    
+    db_reading['model_metrics'] = model_metrics
+
     result = readings_collection.insert_one(db_reading)
+    update_patient_summary(patient_id, risk_level, reading_timestamp, model_metrics)
     
     # Prepare for JSON response - convert ObjectId and datetime
     db_reading['_id'] = str(result.inserted_id)
-    db_reading['timestamp'] = db_reading['timestamp'].isoformat()
+    db_reading['timestamp'] = reading_timestamp.isoformat()
     
     # 5. Prepare the response
     # Based on the final model evaluation from the notebook
     # Accuracy: ~91%, High-Risk Recall: ~87% -> FN Rate: ~13%
     response_data = {
         'reading': db_reading,
-        'model_metrics': {
-            'test_accuracy': '90.6%',
-            'high_risk_false_negative_rate': '13.0%'
-        }
+        'model_metrics': model_metrics
     }
     
     return jsonify(response_data), 201
@@ -188,7 +238,21 @@ def manage_patients():
     if request.method == 'GET':
         patients = []
         for patient in patients_collection.find():
-            patient['_id'] = str(patient['_id']) # Convert ObjectId to string
+            patient_id_str = str(patient['_id'])
+
+            latest_reading = get_latest_reading(patient_id_str)
+            if latest_reading:
+                patient['risk_level'] = latest_reading.get('risk_level', patient.get('risk_level', 'N/A'))
+                patient['last_check_in'] = latest_reading.get('timestamp', patient.get('last_check_in'))
+                if latest_reading.get('model_metrics'):
+                    patient['last_model_metrics'] = latest_reading['model_metrics']
+
+            patient['_id'] = patient_id_str
+
+            last_check_in = patient.get('last_check_in')
+            if isinstance(last_check_in, datetime.datetime):
+                patient['last_check_in'] = last_check_in.isoformat()
+
             patients.append(patient)
         return jsonify(patients)
     
@@ -267,16 +331,27 @@ def predict_for_reading(reading_id):
     # 3. Predict risk using the data from the existing reading
     risk_level = predict_risk(reading, patient['age'])
 
-    # 4. Update the reading in the database with the new risk level
+    # 4. Update the reading in the database with the new risk level & metrics
+    model_metrics = clone_model_metrics()
     readings_collection.update_one(
         {'_id': ObjectId(reading_id)},
-        {'$set': {'risk_level': risk_level}}
+        {'$set': {
+            'risk_level': risk_level,
+            'model_metrics': model_metrics
+        }}
+    )
+
+    update_patient_summary(
+        reading['patient_id'],
+        risk_level,
+        reading.get('timestamp'),
+        model_metrics
     )
 
     # 5. Fetch the updated reading to return it
     updated_reading = readings_collection.find_one({'_id': ObjectId(reading_id)})
     updated_reading['_id'] = str(updated_reading['_id'])
-    if isinstance(updated_reading['timestamp'], datetime.datetime):
+    if isinstance(updated_reading.get('timestamp'), datetime.datetime):
         updated_reading['timestamp'] = updated_reading['timestamp'].isoformat()
 
     return jsonify(updated_reading)

@@ -2,6 +2,17 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './PatientDirectory.css';
 
+const normalizeTimestamp = (value) => {
+  if (!value) return null;
+  if (typeof value === 'string') {
+    return new Date(value);
+  }
+  if (typeof value === 'object' && value.$date) {
+    return new Date(value.$date);
+  }
+  return null;
+};
+
 const PatientDirectory = ({ patients }) => {
   return (
     <div className="patient-directory">
@@ -22,7 +33,10 @@ const PatientDirectory = ({ patients }) => {
               <td>{patient.name}</td>
               <td>{patient.age}</td>
               <td>{patient.risk_level || 'N/A'}</td>
-              <td>{patient.last_check_in ? new Date(patient.last_check_in.$date).toLocaleDateString() : 'N/A'}</td>
+              <td>{(() => {
+                const parsedDate = normalizeTimestamp(patient.last_check_in);
+                return parsedDate ? parsedDate.toLocaleDateString() : 'N/A';
+              })()}</td>
               <td>
                 <Link to={`/patients/${patient._id}`}>
                   <button>Details</button>

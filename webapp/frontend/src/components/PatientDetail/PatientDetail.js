@@ -34,6 +34,12 @@ const PatientDetail = () => {
       }
       const data = await response.json();
       setPatient(data);
+      if (Array.isArray(data.readings)) {
+        const latestWithMetrics = data.readings.find(r => r?.model_metrics);
+        setLastPredictionMetrics(latestWithMetrics?.model_metrics || null);
+      } else {
+        setLastPredictionMetrics(null);
+      }
     } catch (error) {
       console.error("Failed to fetch patient:", error);
       setPatient(null);
@@ -88,6 +94,8 @@ const PatientDetail = () => {
           });
           return { ...prevPatient, readings: updatedReadings };
         });
+
+        setLastPredictionMetrics(updatedReading.model_metrics || null);
 
         // Fetch fresh data to ensure charts and history stay in sync with the database
         await fetchPatient();

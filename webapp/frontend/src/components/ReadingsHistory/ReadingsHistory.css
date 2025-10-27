@@ -68,6 +68,11 @@ tbody tr:hover {
   color: #4b5563;
 }
 
+.developer-metric {
+  font-family: 'Roboto Mono', 'Courier New', monospace;
+  color: #475569;
+}
+
 .btn-predict {
     background-color: #28a745; /* Green */
     color: white;

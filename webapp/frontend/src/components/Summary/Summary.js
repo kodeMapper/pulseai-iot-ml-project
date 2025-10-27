@@ -1,11 +1,16 @@
 import React from 'react';
 import './Summary.css';
 
+const normalizeRiskLevel = (value) => {
+  if (!value) return '';
+  return String(value).toLowerCase();
+};
+
 const Summary = ({ patients }) => {
   const totalPatients = patients.length;
-  const highRisk = patients.filter(p => p.risk_level === 'High').length;
-  const mediumRisk = patients.filter(p => p.risk_level === 'Medium').length;
-  const lowRisk = patients.filter(p => p.risk_level === 'Low').length;
+  const highRisk = patients.filter(p => normalizeRiskLevel(p.risk_level) === 'high').length;
+  const mediumRisk = patients.filter(p => normalizeRiskLevel(p.risk_level) === 'medium').length;
+  const lowRisk = patients.filter(p => normalizeRiskLevel(p.risk_level) === 'low').length;
 
   return (
     <div className="summary-cards">
