@@ -1,1 +1,10 @@
 .venv
+.DS_Store
+__pycache__/
+*.py[cod]
+*.log
+catboost_info/
+logs/
+models/ensemble_best_model.pkl
+webapp/backend/predict.log
+predict.log
