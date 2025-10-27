@@ -20,246 +20,93 @@ warnings.filterwarnings('ignore')
 
 """# Dataset Reading"""
 
-Input_data = pd.read_csv("iot_dataset_expanded.csv")
+Input_data = pd.read_csv("maternal_health_risk.csv")
 Input_data
 
-"""# Data PreProcessing"""
-
-Input_data.head()
-
-Input_data.tail()
-
-Input_data.info()
-
-Input_data.isnull().sum()
-
-Input_data['Target'].value_counts()
-
-Input_data.shape
-
-"""# Data Visualization"""
-
-plt.bar(Input_data['Patient ID'],Input_data['Temperature Data'])
-plt.title("Bar Chart of Temperature Data ")
-plt.xlabel('Patient ID')
-plt.ylabel('Temperature Data')
-plt.show()
-
-plt.bar(Input_data['Patient ID'],Input_data['ECG Data'])
-plt.title("Bar Chart of ECG Data")
-plt.xlabel('Patient ID')
-plt.ylabel('ECG Data')
-plt.show()
-
-plt.bar(Input_data['Patient ID'],Input_data['Pressure Data'])
-plt.title("Bar Chart of Pressure Data")
-plt.xlabel('Patient ID')
-plt.ylabel('Pressure Data')
-plt.show()
-
-plt.bar(Input_data['Patient ID'],Input_data['Target'])
-plt.title("Bar Chart of Targeted Data")
-plt.xlabel('Patient ID')
-plt.ylabel('Targeted Data')
-plt.show()
-
-plt.hist(Input_data['Patient ID'])
-plt.title("Histogram of Patient ID")
-plt.show()
-
-plt.hist(Input_data['Temperature Data'])
-plt.title("Histogram of Temperature Data")
-plt.show()
-
-plt.hist(Input_data['ECG Data'])
-plt.title("Histogram of ECG Data")
-plt.show()
-
-plt.hist(Input_data['Pressure Data'])
-plt.title("Histogram of Pressure Data")
-plt.show()
-
-# count plot on single categorical variable
-sns.countplot(x ='Pressure Data', data = Input_data)
-
-# Show the plot
-plt.show()
-
-# count plot on single categorical variable
-sns.countplot(x ='ECG Data', data = Input_data)
-
-# Show the plot
-plt.show()
-
-# count plot on single categorical variable
-sns.countplot(x ='Temperature Data', data = Input_data)
-
-# Show the plot
-plt.show()
-
-# count plot on single categorical variable
-sns.countplot(x ='Patient ID', data = Input_data)
-
-# Show the plot
-plt.show()
-
-sns.kdeplot(Input_data['Patient ID'])
-
-sns.kdeplot(Input_data['Temperature Data'])
-
-sns.kdeplot(Input_data['ECG Data'])
-
-sns.kdeplot(Input_data['Pressure Data'])
-
-sns.kdeplot(Input_data['Target'])
-
-import seaborn as sns
-corr = Input_data.corr()
-plt.subplots(figsize=(5,5))
-sns.heatmap(corr, annot = True)
-
-"""# Model Implementation"""
-
-X = Input_data.drop('Target',axis=1)
-X
-
-Y = Input_data['Target']
-Y
-
 from sklearn.model_selection import train_test_split
-x_train1,x_test1,y_train1,y_test1 =  train_test_split(X,Y,random_state=42,test_size=0.2,shuffle=True)
-
-"""#  Naive Bayes Algorithm"""
-
-from sklearn.naive_bayes import MultinomialNB
-from sklearn import metrics
-NB_Algorithm = MultinomialNB()
-NB_Algorithm.fit(x_train1, y_train1)
-NB_Algorithm_Prediction = NB_Algorithm.predict(x_test1)
-Accuracy_NB = metrics.accuracy_score(y_test1, NB_Algorithm_Prediction)
-print('Accuracy of Naive Bayes Algorithm', Accuracy_NB)
-
-NB_Algorithm_Prediction
-
-"""# Classification report and Confusion matrix of Naive Bayes Algorithm"""
-
-from sklearn.metrics import classification_report, confusion_matrix
-CM_NB=confusion_matrix(y_test1, NB_Algorithm_Prediction)
-sns.heatmap(CM_NB, annot=True, fmt='d', cmap='YlGnBu')
-print(classification_report(y_test1, NB_Algorithm_Prediction))
-
-"""# Decision Tree Algorithm"""
-
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import accuracy_score
-DT_Algorithm = DecisionTreeClassifier()
-DT_Algorithm.fit(x_train1, y_train1)
-DT_Algorithm_Prediction = DT_Algorithm.predict(x_test1)
-Accuracy_DT = accuracy_score(y_test1, DT_Algorithm_Prediction)
-print('Accuracy of Decision Tree Algorithm', Accuracy_DT)
-
-DT_Algorithm_Prediction
-
-"""# Classification report and Confusion matrix of Decision Tree Algorithm"""
-
-from sklearn.metrics import classification_report, confusion_matrix
-CM_DT=confusion_matrix(y_test1, DT_Algorithm_Prediction)
-sns.heatmap(CM_DT, annot=True, fmt='d', cmap='YlGnBu')
-print(classification_report(y_test1, DT_Algorithm_Prediction))
-
-"""# Logistic Regression Algorithm"""
-
 from sklearn.linear_model import LogisticRegression
-LR_Algorithm = LogisticRegression()
-LR_Algorithm.fit(x_train1, y_train1)
-LR_Algorithm_Prediction = LR_Algorithm.predict(x_test1)
-Accuracy_LR = accuracy_score(y_test1, LR_Algorithm_Prediction)
-print('Accuracy of Logistic Regression Algorithm', Accuracy_LR)
-
-LR_Algorithm_Prediction
-
-"""# Classification report and Confusion matrix of Logistic Regression Algorithm"""
-
-from sklearn.metrics import classification_report, confusion_matrix
-CM_LR=confusion_matrix(y_test1, LR_Algorithm_Prediction)
-sns.heatmap(CM_LR, annot=True, fmt='d', cmap='YlGnBu')
-print(classification_report(y_test1, LR_Algorithm_Prediction))
-
-"""# Support Vector Machine Algorithm"""
-
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
-SVM_Algorithm = SVC()
-SVM_Algorithm.fit(x_train1, y_train1)
-SVM_Algorithm_Prediction = SVM_Algorithm.predict(x_test1)
-Accuracy_SVM = accuracy_score(y_test1, LR_Algorithm_Prediction)
-print('Accuracy of Support Vector Machine Algorithm', Accuracy_SVM)
+from sklearn.naive_bayes import GaussianNB
+from xgboost import XGBClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.preprocessing import StandardScaler
+from imblearn.over_sampling import SMOTE
+from sklearn.metrics import make_scorer, recall_score
 
-SVM_Algorithm_Prediction
+# Drop unnecessary columns if they exist
+if 'Patient ID' in Input_data.columns:
+    Input_data = Input_data.drop('Patient ID', axis=1)
 
-"""# Classification report and Confusion matrix of Support Vector Machine Algorithm"""
+# Assuming the last column is the target
+X = Input_data.iloc[:, :-1]
+y = Input_data.iloc[:, -1]
 
-from sklearn.metrics import classification_report, confusion_matrix
-CM_SVM=confusion_matrix(y_test1, SVM_Algorithm_Prediction)
-sns.heatmap(CM_SVM, annot=True, fmt='d', cmap='YlGnBu')
-print(classification_report(y_test1, SVM_Algorithm_Prediction))
+# Handle categorical target variable
+y = y.astype('category').cat.codes
 
-"""# Comparison Plot of all the Graph"""
+# Split data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-model_accuracy = pd.Series(data=[Accuracy_NB,Accuracy_DT,Accuracy_LR,Accuracy_SVM],
-                index=['Naive Bayes','Decision Tree','Logistic Regression','Support Vector Machine'])
-fig= plt.figure(figsize=(5,5))
-model_accuracy.sort_values().plot.barh()
-plt.title('Comparison Graph of all the Algorithm')
+# Scale features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-"""# Final Prediction Model"""
+# Apply SMOTE to the training data
+smote = SMOTE(random_state=42)
+X_train_resampled, y_train_resampled = smote.fit_resample(X_train_scaled, y_train)
 
-Final_Prediction_data = (71,1,32,0,77)
-Final_Prediction_data = np.array(Final_Prediction_data)
-Final_Prediction_data = Final_Prediction_data.reshape(1,-1)
-Final_prediction = DT_Algorithm.predict(Final_Prediction_data)
+# Train a simple model
+model = LogisticRegression()
+model.fit(X_train_resampled, y_train_resampled)
 
-if Final_prediction == 0:
-    print("The Patient Condition is Low")
-elif Final_prediction == 1:
-    print("The Patient Condition is Medium")
-else:
-    print("The Patient Condition is High")
+# Make predictions and evaluate
+y_pred = model.predict(X_test_scaled)
+accuracy = accuracy_score(y_test, y_pred)
 
-Final_Prediction_data = (10,2,32,0,77)
-Final_Prediction_data = np.array(Final_Prediction_data)
-Final_Prediction_data = Final_Prediction_data.reshape(1,-1)
-Final_prediction = DT_Algorithm.predict(Final_Prediction_data)
+print("--- Logistic Regression ---")
+print(f"Test Accuracy: {accuracy}")
+print(classification_report(y_test, y_pred, target_names=['high', 'low', 'mid']))
 
-if Final_prediction == 0:
-    print("The Patient Condition is Low")
-elif Final_prediction == 1:
-    print("The Patient Condition is Medium")
-else:
-    print("The Patient Condition is High")
 
-Final_Prediction_data = (43,1,32,0,77)
-Final_Prediction_data = np.array(Final_Prediction_data)
-Final_Prediction_data = Final_Prediction_data.reshape(1,-1)
-Final_prediction = DT_Algorithm.predict(Final_Prediction_data)
+models = {
+    "Decision Tree": DecisionTreeClassifier(),
+    "Random Forest": RandomForestClassifier(),
+    "Gradient Boosting": GradientBoostingClassifier(),
+    "Support Vector Machine": SVC(),
+    "Gaussian Naive Bayes": GaussianNB(),
+    "XGBoost": XGBClassifier()
+}
 
-if Final_prediction == 0:
-    print("The Patient Condition is Low")
-elif Final_prediction == 1:
-    print("The Patient Condition is Medium")
-else:
-    print("The Patient Condition is High")
+for name, model in models.items():
+    model.fit(X_train_resampled, y_train_resampled)
+    y_pred = model.predict(X_test_scaled)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"--- {name} ---")
+    print(f"Test Accuracy: {accuracy}")
+    print(classification_report(y_test, y_pred, target_names=['high', 'low', 'mid']))
 
-# Create a DataFrame to display the results
-results = pd.DataFrame({
-    'Model': ['Naive Bayes', 'Decision Tree', 'Logistic Regression', 'Support Vector Machine'],
-    'Accuracy': [Accuracy_NB, Accuracy_DT, Accuracy_LR, Accuracy_SVM],
-    'Precision (Weighted Avg)': [
-        metrics.classification_report(y_test1, NB_Algorithm_Prediction, output_dict=True)['weighted avg']['precision'],
-        metrics.classification_report(y_test1, DT_Algorithm_Prediction, output_dict=True)['weighted avg']['precision'],
-        metrics.classification_report(y_test1, LR_Algorithm_Prediction, output_dict=True)['weighted avg']['precision'],
-        metrics.classification_report(y_test1, SVM_Algorithm_Prediction, output_dict=True)['weighted avg']['precision']
-    ]
-})
 
-# Display the results
-display(results)
+print("\nTuning XGBoost for Recall...")
+param_grid = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [3, 4, 5],
+    'learning_rate': [0.1, 0.01, 0.05]
+}
+
+# Define the scorer to optimize for recall on the 'high' risk class (encoded as 0)
+recall_scorer = make_scorer(recall_score, pos_label=0)
+
+xgb = XGBClassifier(eval_metric='mlogloss')
+grid_search = GridSearchCV(estimator=xgb, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2, scoring=recall_scorer)
+grid_search.fit(X_train_resampled, y_train_resampled)
+
+print("Best parameters for recall: ", grid_search.best_params_)
+best_xgb_recall = grid_search.best_estimator_
+y_pred_best_recall = best_xgb_recall.predict(X_test_scaled)
+print("\n--- Tuned XGBoost (Optimized for Recall) ---")
+print(classification_report(y_test, y_pred_best_recall, target_names=['high', 'low', 'mid']))
+

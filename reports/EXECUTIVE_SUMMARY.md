@@ -1,28 +1,28 @@
 # PulseAI - Model Enhancement Report
 
-**Date:** October 25, 2025
+**Date:** October 27, 2025
 
 ---
 
 ## 🏆 Best Performing Model
 
-**Model:** Ensemble_Voting
+**Model:** XGBoost
 
 | Metric | Score |
 |--------|-------|
-| Accuracy | 0.4147 (41.47%) |
-| Precision | 0.3766 |
-| Recall | 0.4147 |
-| F1 Score | 0.3521 |
-| CV Score | 0.4004 |
+| Accuracy | 0.4199 (41.99%) |
+| Precision | 0.3225 |
+| Recall | 0.4199 |
+| F1 Score | 0.3509 |
+| CV Score | 0.3909 |
 
 ## 📊 Model Comparison Table
 
 | Model                |   Accuracy |   Precision |   Recall |   F1_Score |   CV_Score |
 |:---------------------|-----------:|------------:|---------:|-----------:|-----------:|
+| XGBoost              |     0.4199 |      0.3225 |   0.4199 |     0.3509 |     0.3909 |
 | Ensemble_Voting      |     0.4147 |      0.3766 |   0.4147 |     0.3521 |     0.4004 |
 | Gradient_Boosting    |     0.4121 |      0.4077 |   0.4121 |     0.3735 |     0.4087 |
-| XGBoost              |     0.4094 |      0.3115 |   0.4094 |     0.3412 |     0.3909 |
 | Decision_Tree        |     0.4068 |      0.3090 |   0.4068 |     0.3450 |     0.3962 |
 | SVM                  |     0.3990 |      0.3399 |   0.3990 |     0.2648 |     0.3936 |
 | Random_Forest        |     0.3990 |      0.3077 |   0.3990 |     0.3377 |     0.3830 |
@@ -32,10 +32,10 @@
 ## 💡 Key Insights
 
 - **Total Models Trained:** 8
-- **Best Model:** Ensemble_Voting
-- **Accuracy Range:** 0.3858 - 0.4147
-- **Average Accuracy:** 0.4029
-- **Top 3 Models:** Ensemble_Voting, Gradient_Boosting, XGBoost
+- **Best Model:** XGBoost
+- **Accuracy Range:** 0.3858 - 0.4199
+- **Average Accuracy:** 0.4042
+- **Top 3 Models:** XGBoost, Ensemble_Voting, Gradient_Boosting
 
 ## 🎯 Recommendations
 

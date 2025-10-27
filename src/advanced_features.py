@@ -7,6 +7,17 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import json
+import logging
+
+
+SRC_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SRC_DIR.parent
+DATA_FILE = PROJECT_ROOT / "iot_dataset_expanded.csv"
+OUTPUT_ENGINEERED = PROJECT_ROOT / "iot_dataset_engineered.csv"
+REPORTS_DIR = PROJECT_ROOT / "reports"
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class AdvancedFeatureEngineer:
     """Advanced medical feature engineering for IoT health monitoring"""
@@ -252,7 +263,7 @@ class AdvancedFeatureEngineer:
         print(f"   ✅ Created 6 aggregate features")
         return df
     
-    def save_feature_report(self, df: pd.DataFrame, output_path: str = 'reports/feature_engineering_report.json'):
+    def save_feature_report(self, df: pd.DataFrame, output_path: Path = REPORTS_DIR / 'feature_engineering_report.json'):
         """Save feature engineering report"""
         print(f"\n💾 Saving Feature Report...")
         
@@ -317,7 +328,7 @@ class AdvancedFeatureEngineer:
             plt.tight_layout()
             
             # Save
-            output_path = Path('reports/feature_correlations.png')
+            output_path = REPORTS_DIR / 'feature_correlations.png'
             plt.savefig(output_path, dpi=300, bbox_inches='tight')
             print(f"   ✅ Saved: {output_path}")
             
@@ -331,10 +342,26 @@ class AdvancedFeatureEngineer:
 
 def main():
     """Main execution"""
-    # Load augmented dataset
-    print("📂 Loading augmented dataset...")
-    df = pd.read_csv('dataset_augmented.csv')
-    print(f"   Loaded: {len(df)} samples")
+    # Load expanded dataset
+    print("📂 Loading expanded dataset...")
+
+    if not DATA_FILE.exists():
+        raise FileNotFoundError(f"Dataset not found at {DATA_FILE}")
+
+    df = pd.read_csv(DATA_FILE)
+    original_count = len(df)
+
+    # Drop serial column if present
+    if 'Sl.No' in df.columns:
+        df = df.drop(columns=['Sl.No'])
+
+    # Remove duplicates
+    duplicate_count = df.duplicated().sum()
+    if duplicate_count:
+        print(f"   ⚠️  Found {duplicate_count} duplicate rows. Removing...")
+        df = df.drop_duplicates()
+
+    print(f"   Loaded: {len(df)} samples (originally {original_count})")
     
     # Initialize feature engineer
     engineer = AdvancedFeatureEngineer()
@@ -343,7 +370,7 @@ def main():
     df_engineered = engineer.engineer_all_features(df)
     
     # Save engineered dataset
-    output_file = 'dataset_engineered.csv'
+    output_file = OUTPUT_ENGINEERED
     df_engineered.to_csv(output_file, index=False)
     print(f"\n💾 Engineered dataset saved: {output_file}")
     

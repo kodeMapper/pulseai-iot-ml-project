@@ -1,63 +1,63 @@
 {
-    "timestamp": "2025-10-22T14:50:28.649662",
+    "timestamp": "2025-10-27T13:24:35.732488",
     "task": "Task 1.4 - Advanced Ensemble Techniques",
     "dataset": {
-        "total_samples": 663,
-        "train_samples": 464,
-        "test_samples": 199,
+        "total_samples": 1903,
+        "train_samples": 1572,
+        "test_samples": 571,
         "features": 64
     },
     "models": {
         "CatBoost": {
-            "test_accuracy": 0.507537688442211,
-            "cv_accuracy": 0.5127659574468085
+            "test_accuracy": 0.3345008756567426,
+            "cv_accuracy": 0.4210876400870758
         },
         "LightGBM": {
-            "test_accuracy": 0.5125628140703518,
-            "cv_accuracy": 0.5319611470860315
+            "test_accuracy": 0.329246935201401,
+            "cv_accuracy": 0.4319277594130453
         },
         "XGBoost": {
-            "test_accuracy": 0.5025125628140703,
-            "cv_accuracy": 0.5296947271045329
+            "test_accuracy": 0.329246935201401,
+            "cv_accuracy": 0.43508828509231634
         },
         "Extra_Trees": {
-            "test_accuracy": 0.5276381909547738,
-            "cv_accuracy": 0.5083256244218316
+            "test_accuracy": 0.3327495621716287,
+            "cv_accuracy": 0.4287833588647908
         },
         "Random_Forest": {
-            "test_accuracy": 0.5125628140703518,
-            "cv_accuracy": 0.5190564292321925
+            "test_accuracy": 0.3327495621716287,
+            "cv_accuracy": 0.43636620172538904
         },
         "Logistic_Regression": {
-            "test_accuracy": 0.5025125628140703,
-            "cv_accuracy": 0.5191026827012026
+            "test_accuracy": 0.3309982486865149,
+            "cv_accuracy": 0.34032492138998627
         },
         "Voting_Ensemble": {
-            "test_accuracy": 0.5175879396984925,
+            "test_accuracy": 0.3397548161120841,
             "cv_accuracy": null
         },
         "Stacking_Ensemble": {
-            "test_accuracy": 0.5226130653266332,
+            "test_accuracy": 0.3327495621716287,
             "cv_accuracy": null
         }
     },
-    "best_model": "Extra_Trees",
-    "best_test_accuracy": 0.5276381909547738,
+    "best_model": "Voting_Ensemble",
+    "best_test_accuracy": 0.3397548161120841,
     "confusion_matrix": [
         [
-            27,
-            36,
-            6
+            94,
+            77,
+            54
         ],
         [
-            7,
-            56,
-            5
+            83,
+            59,
+            69
         ],
         [
-            1,
+            55,
             39,
-            22
+            41
         ]
     ]
 }

@@ -8,27 +8,45 @@ import numpy as np
 import joblib
 import json
 from datetime import datetime
+from pathlib import Path
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
 from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.ensemble import (RandomForestClassifier, GradientBoostingClassifier, 
                               StackingClassifier, VotingClassifier, ExtraTreesClassifier)
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from imblearn.over_sampling import SMOTE
 from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from xgboost import XGBClassifier
 import warnings
 warnings.filterwarnings('ignore')
 
+SRC_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SRC_DIR.parent
+DATA_FILE = PROJECT_ROOT / 'iot_dataset_engineered.csv'
+MODELS_DIR = PROJECT_ROOT / 'models'
+REPORTS_DIR = PROJECT_ROOT / 'reports'
+
+MODELS_DIR.mkdir(exist_ok=True)
+REPORTS_DIR.mkdir(exist_ok=True)
+
 print("="*70)
 print("PulseAI Advanced Ensemble Techniques (Task 1.4)")
 print("CatBoost + LightGBM + XGBoost + Stacking")
 print("="*70)
 
-# Load augmented + engineered dataset
+# Load engineered dataset
 print("\n📂 Loading engineered dataset...")
-df = pd.read_csv('dataset_engineered.csv')
+
+if not DATA_FILE.exists():
+    raise FileNotFoundError(
+        f"Engineered dataset not found at {DATA_FILE}. Run advanced_features.py first."
+    )
+
+df = pd.read_csv(DATA_FILE)
 
 # Prepare features (use only top 30 selected features from corrected_training.py)
 feature_cols = [col for col in df.columns 
@@ -47,6 +65,27 @@ X_train, X_test, y_train, y_test = train_test_split(
 print(f"   Training: {len(X_train)} samples")
 print(f"   Testing: {len(X_test)} samples")
 
+print("\n⚖️  Balancing classes with SMOTE...")
+smote = SMOTE(random_state=42)
+X_train, y_train = smote.fit_resample(X_train, y_train)
+print(f"   Resampled training size: {len(X_train)}")
+unique, counts = np.unique(y_train, return_counts=True)
+balance_info = {int(cls): int(cnt) for cls, cnt in zip(unique, counts)}
+print(f"   Class distribution after SMOTE: {balance_info}")
+
+# Feature selection
+k_features = min(30, X_train.shape[1])
+print(f"\n🧮 Selecting top {k_features} features using ANOVA F-test...")
+selector = SelectKBest(score_func=f_classif, k=k_features)
+selector.fit(X_train, y_train)
+
+selected_indices = selector.get_support(indices=True)
+selected_feature_names = [feature_cols[i] for i in selected_indices]
+print(f"   Selected features: {selected_feature_names[:10]}{'...' if len(selected_feature_names) > 10 else ''}")
+
+X_train = selector.transform(X_train)
+X_test = selector.transform(X_test)
+
 # Scale features
 print("\n⚖️  Scaling features...")
 scaler = StandardScaler()
@@ -54,7 +93,7 @@ X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
 # Save scaler
-joblib.dump(scaler, 'models/ensemble_scaler.pkl')
+joblib.dump(scaler, MODELS_DIR / 'ensemble_scaler.pkl')
 
 # Define models
 print("\n" + "="*70)
@@ -65,13 +104,16 @@ cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
 
 # Model 1: CatBoost
 print("\n🔄 Training CatBoost...")
+class_weights = {cls: len(y_train) / (len(np.unique(y_train)) * np.sum(y_train == cls)) for cls in np.unique(y_train)}
+
 catboost_model = CatBoostClassifier(
-    iterations=500,
-    learning_rate=0.05,
-    depth=6,
-    l2_leaf_reg=3,
+    iterations=700,
+    learning_rate=0.03,
+    depth=8,
+    l2_leaf_reg=5,
     random_seed=42,
-    verbose=False
+    verbose=False,
+    class_weights=[class_weights.get(cls, 1.0) for cls in range(len(class_weights))]
 )
 catboost_model.fit(X_train_scaled, y_train)
 
@@ -85,13 +127,14 @@ print(f"   CV Score: {catboost_cv*100:.2f}%")
 # Model 2: LightGBM
 print("\n🔄 Training LightGBM...")
 lightgbm_model = LGBMClassifier(
-    n_estimators=500,
-    learning_rate=0.05,
-    max_depth=6,
-    num_leaves=31,
-    subsample=0.8,
-    colsample_bytree=0.8,
+    n_estimators=800,
+    learning_rate=0.03,
+    max_depth=-1,
+    num_leaves=64,
+    subsample=0.9,
+    colsample_bytree=0.9,
     random_state=42,
+    class_weight='balanced',
     verbose=-1
 )
 lightgbm_model.fit(X_train_scaled, y_train)
@@ -106,14 +149,19 @@ print(f"   CV Score: {lightgbm_cv*100:.2f}%")
 # Model 3: XGBoost
 print("\n🔄 Training XGBoost...")
 xgboost_model = XGBClassifier(
-    n_estimators=500,
-    learning_rate=0.05,
+    n_estimators=800,
+    learning_rate=0.03,
     max_depth=6,
-    subsample=0.8,
-    colsample_bytree=0.8,
+    subsample=0.9,
+    colsample_bytree=0.9,
+    reg_lambda=1.5,
+    reg_alpha=0.5,
+    gamma=0.1,
     random_state=42,
     eval_metric='mlogloss',
-    verbosity=0
+    verbosity=0,
+    objective='multi:softprob',
+    num_class=len(np.unique(y))
 )
 xgboost_model.fit(X_train_scaled, y_train)
 
@@ -127,9 +175,10 @@ print(f"   CV Score: {xgboost_cv*100:.2f}%")
 # Model 4: Extra Trees (additional diversity)
 print("\n🔄 Training Extra Trees...")
 extra_trees_model = ExtraTreesClassifier(
-    n_estimators=300,
-    max_depth=20,
+    n_estimators=400,
+    max_depth=None,
     min_samples_split=5,
+    class_weight='balanced',
     random_state=42
 )
 extra_trees_model.fit(X_train_scaled, y_train)
@@ -144,9 +193,10 @@ print(f"   CV Score: {extra_trees_cv*100:.2f}%")
 # Model 5: Random Forest
 print("\n🔄 Training Random Forest...")
 rf_model = RandomForestClassifier(
-    n_estimators=300,
-    max_depth=20,
+    n_estimators=400,
+    max_depth=None,
     min_samples_split=5,
+    class_weight='balanced_subsample',
     random_state=42
 )
 rf_model.fit(X_train_scaled, y_train)
@@ -161,10 +211,11 @@ print(f"   CV Score: {rf_cv*100:.2f}%")
 # Model 6: Logistic Regression (linear baseline)
 print("\n🔄 Training Logistic Regression...")
 lr_model = LogisticRegression(
-    C=10,
-    max_iter=2000,
+    C=5,
+    max_iter=5000,
     multi_class='multinomial',
     solver='lbfgs',
+    class_weight='balanced',
     random_state=42
 )
 lr_model.fit(X_train_scaled, y_train)
@@ -285,13 +336,13 @@ print(f"   Test Accuracy: {best_acc*100:.2f}%")
 
 # Save best model
 if best_model_name == 'Voting_Ensemble':
-    joblib.dump(voting_ensemble, 'models/ensemble_best_model.pkl')
+    joblib.dump(voting_ensemble, MODELS_DIR / 'ensemble_best_model.pkl')
     best_pred = voting_pred
 elif best_model_name == 'Stacking_Ensemble':
-    joblib.dump(stacking_ensemble, 'models/ensemble_best_model.pkl')
+    joblib.dump(stacking_ensemble, MODELS_DIR / 'ensemble_best_model.pkl')
     best_pred = stacking_pred
 else:
-    joblib.dump(model_map[best_model_name], 'models/ensemble_best_model.pkl')
+    joblib.dump(model_map[best_model_name], MODELS_DIR / 'ensemble_best_model.pkl')
     best_pred = model_map[best_model_name].predict(X_test_scaled)
 
 print(f"   💾 Best model saved")
@@ -340,7 +391,7 @@ metadata = {
     'confusion_matrix': cm.tolist()
 }
 
-with open('models/ensemble_metadata.json', 'w') as f:
+with open(MODELS_DIR / 'ensemble_metadata.json', 'w') as f:
     json.dump(metadata, f, indent=4)
 
 print(f"\n💾 Metadata saved")

@@ -1,0 +1,286 @@
+from flask import Flask, request, jsonify
+from flask_pymongo import PyMongo
+from flask_cors import CORS
+from bson.objectid import ObjectId
+import joblib
+import numpy as np
+import pandas as pd
+import datetime
+import json
+import os
+import logging
+
+# --- Logging Configuration ---
+# Ensure log file is created in the same directory as this script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+log_file_path = os.path.join(script_dir, 'predict.log')
+
+logging.basicConfig(level=logging.DEBUG, 
+                    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+                    handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()])
+
+app = Flask(__name__)
+CORS(app)
+
+# --- Database Configuration ---
+app.config["MONGO_URI"] = "mongodb+srv://admin:adminkapassword@cluster0.kgfpket.mongodb.net/PulseAi"
+mongo = PyMongo(app)
+
+# --- ML Model Loading ---
+# Construct absolute paths to model files for robustness
+# The script_dir is webapp/backend
+script_dir = os.path.dirname(os.path.abspath(__file__))
+# We need to go up two levels to the project root 'PulseAi - ML project'
+project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
+
+model_path = os.path.join(project_root, 'models', 'tuned_gradient_boosting.pkl')
+scaler_path = os.path.join(project_root, 'models', 'enhanced_scaler.pkl')
+features_path = os.path.join(project_root, 'models', 'tuned_gradient_boosting_features.json')
+risk_map_path = os.path.join(project_root, 'models', 'risk_label_mapping.json')
+
+model = None
+scaler = None
+feature_names = None
+risk_map = None
+
+
+def load_model_assets(force_reload=False):
+    """Ensure the model, scaler, and feature metadata are loaded before inference."""
+    global model, scaler, feature_names, risk_map
+
+    if not force_reload and all([model, scaler, feature_names, risk_map]):
+        return True
+
+    logging.info(f"Attempting to load model from: {model_path}")
+    logging.info(f"Attempting to load scaler from: {scaler_path}")
+    logging.info(f"Attempting to load features from: {features_path}")
+    logging.info(f"Attempting to load risk mapping from: {risk_map_path}")
+
+    try:
+        model = joblib.load(model_path)
+        scaler = joblib.load(scaler_path)
+        with open(features_path, 'r') as f:
+            feature_payload = json.load(f)
+
+        if isinstance(feature_payload, dict):
+            feature_names_raw = feature_payload.get('feature_names') or feature_payload.get('features')
+        else:
+            feature_names_raw = feature_payload
+
+        if not feature_names_raw or not isinstance(feature_names_raw, (list, tuple)):
+            raise ValueError("Feature metadata must provide a list of feature names.")
+
+        feature_names = list(feature_names_raw)
+
+        risk_map = None
+        if os.path.exists(risk_map_path):
+            with open(risk_map_path, 'r') as f:
+                stored_mapping = json.load(f)
+            # JSON forces keys to strings – coerce back to ints
+            risk_map = {int(k): v for k, v in stored_mapping.items()}
+
+        if not risk_map:
+            logging.warning("Risk mapping file missing or empty; using default mapping.")
+            risk_map = {0: 'High', 1: 'Low', 2: 'Medium'}
+        logging.info("ML model assets loaded successfully.")
+        return True
+    except Exception as e:
+        logging.error("Error loading ML assets.", exc_info=True)
+        model = None
+        scaler = None
+        feature_names = None
+        risk_map = None
+        return False
+
+
+# Attempt an initial load so that the first request is fast.
+load_model_assets()
+
+def predict_risk(data, patient_age):
+    if not load_model_assets():
+        logging.error("Model, scaler, or feature names not loaded.")
+        return "N/A"
+
+    try:
+        # 1. Map frontend keys to model feature names and perform unit conversions
+        feature_dict = {
+            'Age': patient_age,
+            'SystolicBP': data.get('systolic_bp'),
+            'DiastolicBP': data.get('diastolic_bp'),
+            'BS': data.get('bs'),
+            'HeartRate': data.get('heart_rate'),
+            # Convert Celsius to Fahrenheit for the model
+            'BodyTemp': (float(data.get('body_temp')) * 9/5) + 32 if data.get('body_temp') is not None else None
+        }
+        logging.debug(f"Initial feature dictionary: {feature_dict}")
+
+        # 2. Create DataFrame from the dictionary
+        input_df = pd.DataFrame([feature_dict])
+        logging.debug(f"DataFrame before column alignment:\n{input_df.to_string()}")
+
+        # 3. Ensure all required columns from training are present, in the correct order
+        missing_cols = set(feature_names) - set(input_df.columns)
+        for c in missing_cols:
+            input_df[c] = 0
+        
+        input_df = input_df[feature_names]
+        logging.debug(f"DataFrame after column alignment and ordering:\n{input_df.to_string()}")
+
+        # 4. Scale the data
+        scaled_data = scaler.transform(input_df)
+        logging.debug(f"Scaled data for prediction: {scaled_data}")
+        
+        # 5. Make prediction
+        prediction = model.predict(scaled_data)
+        logging.debug(f"Raw model prediction: {prediction}")
+        
+        # 6. Map prediction to risk level
+        risk_level = risk_map.get(prediction[0], "N/A") if risk_map else "N/A"
+        logging.info(f"Predicted risk level: {risk_level}")
+        return risk_level
+    except Exception as e:
+        logging.error(f"Error during prediction: {e}", exc_info=True)
+        return "Error"
+
+# --- API Endpoints ---
+@app.route('/api/predict/<patient_id>', methods=['POST'])
+def run_prediction(patient_id):
+    # 1. Get patient to find their age
+    patients_collection = mongo.db.patients
+    patient = patients_collection.find_one_or_404({'_id': ObjectId(patient_id)})
+    
+    # 2. Get the new reading data from the request
+    new_reading_data = request.get_json()
+    
+    # 3. Predict risk
+    risk_level = predict_risk(new_reading_data, patient['age'])
+    
+    # 4. Store the new reading in the database
+    readings_collection = mongo.db.readings
+    db_reading = new_reading_data.copy()
+    db_reading['patient_id'] = patient_id
+    db_reading['timestamp'] = datetime.datetime.utcnow()
+    db_reading['risk_level'] = risk_level
+    
+    result = readings_collection.insert_one(db_reading)
+    
+    # Prepare for JSON response - convert ObjectId and datetime
+    db_reading['_id'] = str(result.inserted_id)
+    db_reading['timestamp'] = db_reading['timestamp'].isoformat()
+    
+    # 5. Prepare the response
+    # Based on the final model evaluation from the notebook
+    # Accuracy: ~91%, High-Risk Recall: ~87% -> FN Rate: ~13%
+    response_data = {
+        'reading': db_reading,
+        'model_metrics': {
+            'test_accuracy': '90.6%',
+            'high_risk_false_negative_rate': '13.0%'
+        }
+    }
+    
+    return jsonify(response_data), 201
+
+
+@app.route('/api/patients', methods=['GET', 'POST'])
+def manage_patients():
+    patients_collection = mongo.db.patients
+    if request.method == 'GET':
+        patients = []
+        for patient in patients_collection.find():
+            patient['_id'] = str(patient['_id']) # Convert ObjectId to string
+            patients.append(patient)
+        return jsonify(patients)
+    
+    elif request.method == 'POST':
+        new_patient = request.get_json()
+        # Add default empty readings array
+        new_patient['readings'] = []
+        result = patients_collection.insert_one(new_patient)
+        new_patient['_id'] = str(result.inserted_id)
+        return jsonify(new_patient), 201
+
+@app.route('/api/patients/<patient_id>', methods=['GET'])
+def get_patient(patient_id):
+    patients_collection = mongo.db.patients
+    patient = patients_collection.find_one_or_404({'_id': ObjectId(patient_id)})
+    patient['_id'] = str(patient['_id'])
+    
+    # Fetch readings for the patient
+    readings_collection = mongo.db.readings
+    readings = []
+    # Sort by timestamp descending
+    for reading in readings_collection.find({'patient_id': patient_id}).sort('timestamp', -1):
+        reading['_id'] = str(reading['_id'])
+        # Ensure timestamp is a string for JSON serialization
+        if isinstance(reading['timestamp'], datetime.datetime):
+            reading['timestamp'] = reading['timestamp'].isoformat()
+        readings.append(reading)
+    
+    patient['readings'] = readings
+    return jsonify(patient)
+
+@app.route('/api/patients/<patient_id>/readings', methods=['POST'])
+def add_reading(patient_id):
+    """
+    Adds a new reading for a patient without running a prediction.
+    The risk level is set to 'N/A' by default.
+    """
+    # 1. Check if patient exists
+    patients_collection = mongo.db.patients
+    if not patients_collection.find_one({'_id': ObjectId(patient_id)}):
+        return jsonify({"error": "Patient not found"}), 404
+
+    # 2. Get the new reading data from the request
+    new_reading_data = request.get_json()
+    
+    # 3. Store the new reading in the database with default risk
+    readings_collection = mongo.db.readings
+    db_reading = new_reading_data.copy()
+    db_reading['patient_id'] = patient_id
+    db_reading['timestamp'] = datetime.datetime.utcnow()
+    db_reading['risk_level'] = "N/A"  # Default value
+    
+    result = readings_collection.insert_one(db_reading)
+    
+    # 4. Prepare for JSON response
+    db_reading['_id'] = str(result.inserted_id)
+    db_reading['timestamp'] = db_reading['timestamp'].isoformat()
+    
+    return jsonify(db_reading), 201
+
+
+@app.route('/api/readings/<reading_id>/predict', methods=['PUT'])
+def predict_for_reading(reading_id):
+    """
+    Runs a prediction for a specific, existing reading.
+    """
+    readings_collection = mongo.db.readings
+    patients_collection = mongo.db.patients
+
+    # 1. Find the reading
+    reading = readings_collection.find_one_or_404({'_id': ObjectId(reading_id)})
+    
+    # 2. Find the associated patient to get their age
+    patient = patients_collection.find_one_or_404({'_id': ObjectId(reading['patient_id'])})
+
+    # 3. Predict risk using the data from the existing reading
+    risk_level = predict_risk(reading, patient['age'])
+
+    # 4. Update the reading in the database with the new risk level
+    readings_collection.update_one(
+        {'_id': ObjectId(reading_id)},
+        {'$set': {'risk_level': risk_level}}
+    )
+
+    # 5. Fetch the updated reading to return it
+    updated_reading = readings_collection.find_one({'_id': ObjectId(reading_id)})
+    updated_reading['_id'] = str(updated_reading['_id'])
+    if isinstance(updated_reading['timestamp'], datetime.datetime):
+        updated_reading['timestamp'] = updated_reading['timestamp'].isoformat()
+
+    return jsonify(updated_reading)
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
