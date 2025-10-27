@@ -1,0 +1,113 @@
+{
+    "timestamp": "2025-10-22T14:37:28.761402",
+    "task": "Task 1.3 - Deep Learning Models",
+    "dataset": {
+        "total_samples": 663,
+        "train_samples": 394,
+        "val_samples": 70,
+        "test_samples": 199,
+        "features": 64,
+        "feature_names": [
+            "Temperature Data",
+            "ECG Data",
+            "Pressure Data",
+            "Temp_Fever",
+            "Temp_Hypothermia",
+            "Temp_Severe_Fever",
+            "Temp_Deviation_Normal",
+            "ECG_Abnormal",
+            "ECG_Critical",
+            "ECG_Very_Low",
+            "ECG_Severity_Score",
+            "Pressure_Low",
+            "Pressure_High",
+            "Pressure_Deviation",
+            "Pressure_Normal_Range",
+            "Multiple_Abnormalities",
+            "Critical_Vitals",
+            "Temperature Data_ZScore",
+            "ECG Data_ZScore",
+            "Pressure Data_ZScore",
+            "Temperature Data_Normalized",
+            "ECG Data_Normalized",
+            "Pressure Data_Normalized",
+            "Temperature Data_Percentile",
+            "ECG Data_Percentile",
+            "Pressure Data_Percentile",
+            "Temp_ECG_Ratio",
+            "ECG_Pressure_Ratio",
+            "Temp_Pressure_Ratio",
+            "Vital_Efficiency",
+            "Temp_Squared",
+            "ECG_Squared",
+            "Pressure_Squared",
+            "Temp_Cubed",
+            "ECG_Cubed",
+            "Temp_Sqrt",
+            "ECG_Sqrt",
+            "Pressure_Sqrt",
+            "ECG_Is_Zero",
+            "ECG_Is_NonZero",
+            "Temp_In_Normal_Range",
+            "ECG_In_Low_Range",
+            "ECG_In_High_Range",
+            "Temp_Extreme",
+            "ECG_Extreme",
+            "Temperature Data_Distance_From_Median",
+            "ECG Data_Distance_From_Median",
+            "Pressure Data_Distance_From_Median",
+            "Temperature Data_Is_Outlier",
+            "ECG Data_Is_Outlier",
+            "Pressure Data_Is_Outlier",
+            "Total_Anomaly_Score",
+            "Temp_ECG_Interaction",
+            "Temp_Pressure_Interaction",
+            "ECG_Pressure_Interaction",
+            "Three_Way_Interaction",
+            "Temp_Plus_ECG",
+            "All_Vitals_Sum",
+            "Vitals_Mean",
+            "Vitals_Std",
+            "Vitals_Min",
+            "Vitals_Max",
+            "Vitals_Range",
+            "Vitals_CV"
+        ]
+    },
+    "models": {
+        "MLP": {
+            "val_accuracy": 0.5,
+            "test_accuracy": 0.5025125741958618,
+            "epochs": 35
+        },
+        "1D_CNN": {
+            "val_accuracy": 0.5142857432365417,
+            "test_accuracy": 0.4773869216442108,
+            "epochs": 64
+        },
+        "Deep_MLP": {
+            "val_accuracy": 0.41428571939468384,
+            "test_accuracy": 0.31658291816711426,
+            "epochs": 15
+        }
+    },
+    "best_model": "MLP",
+    "best_test_accuracy": 0.5025125741958618,
+    "confusion_matrix": [
+        [
+            29,
+            37,
+            3
+        ],
+        [
+            12,
+            51,
+            5
+        ],
+        [
+            2,
+            40,
+            20
+        ]
+    ]
+}

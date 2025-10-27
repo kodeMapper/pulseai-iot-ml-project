@@ -1,0 +1,63 @@
+{
+    "timestamp": "2025-10-22T14:50:28.649662",
+    "task": "Task 1.4 - Advanced Ensemble Techniques",
+    "dataset": {
+        "total_samples": 663,
+        "train_samples": 464,
+        "test_samples": 199,
+        "features": 64
+    },
+    "models": {
+        "CatBoost": {
+            "test_accuracy": 0.507537688442211,
+            "cv_accuracy": 0.5127659574468085
+        },
+        "LightGBM": {
+            "test_accuracy": 0.5125628140703518,
+            "cv_accuracy": 0.5319611470860315
+        },
+        "XGBoost": {
+            "test_accuracy": 0.5025125628140703,
+            "cv_accuracy": 0.5296947271045329
+        },
+        "Extra_Trees": {
+            "test_accuracy": 0.5276381909547738,
+            "cv_accuracy": 0.5083256244218316
+        },
+        "Random_Forest": {
+            "test_accuracy": 0.5125628140703518,
+            "cv_accuracy": 0.5190564292321925
+        },
+        "Logistic_Regression": {
+            "test_accuracy": 0.5025125628140703,
+            "cv_accuracy": 0.5191026827012026
+        },
+        "Voting_Ensemble": {
+            "test_accuracy": 0.5175879396984925,
+            "cv_accuracy": null
+        },
+        "Stacking_Ensemble": {
+            "test_accuracy": 0.5226130653266332,
+            "cv_accuracy": null
+        }
+    },
+    "best_model": "Extra_Trees",
+    "best_test_accuracy": 0.5276381909547738,
+    "confusion_matrix": [
+        [
+            27,
+            36,
+            6
+        ],
+        [
+            7,
+            56,
+            5
+        ],
+        [
+            1,
+            39,
+            22
+        ]
+    ]
+}

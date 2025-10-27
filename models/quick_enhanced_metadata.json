@@ -1,0 +1,41 @@
+{
+    "timestamp": "2025-10-22T14:22:31.526731",
+    "dataset": {
+        "total_samples": 663,
+        "train_samples": 530,
+        "test_samples": 133,
+        "features": 64
+    },
+    "best_model": "Random_Forest",
+    "accuracy": 0.5338345864661654,
+    "all_results": {
+        "Gaussian_NB": {
+            "accuracy": 0.42105263157894735,
+            "cv_score": 0.40943396226415096
+        },
+        "Decision_Tree": {
+            "accuracy": 0.5112781954887218,
+            "cv_score": 0.5226415094339624
+        },
+        "Logistic_Regression": {
+            "accuracy": 0.5112781954887218,
+            "cv_score": 0.5283018867924528
+        },
+        "SVM": {
+            "accuracy": 0.49624060150375937,
+            "cv_score": 0.5113207547169811
+        },
+        "Random_Forest": {
+            "accuracy": 0.5338345864661654,
+            "cv_score": 0.5169811320754717
+        },
+        "Gradient_Boosting": {
+            "accuracy": 0.5112781954887218,
+            "cv_score": 0.5320754716981132
+        },
+        "Enhanced_Ensemble": {
+            "accuracy": 0.5112781954887218,
+            "cv_score": 0.5112781954887218
+        }
+    }
+}
