@@ -23,16 +23,6 @@ const ReadingsHistory = ({ readings }) => {
     return 'risk-na';
   };
 
-  const formatTestAccuracy = (metrics) => {
-    if (!metrics) return 'N/A';
-    const value = metrics.test_accuracy ?? metrics.accuracy;
-    if (value === null || value === undefined) return 'N/A';
-    if (typeof value === 'number') {
-      return `${(value * 100).toFixed(1)}%`;
-    }
-    return value;
-  };
-
   return (
     <div className="readings-history-card">
       <h3>Reading History</h3>
@@ -47,7 +37,6 @@ const ReadingsHistory = ({ readings }) => {
               <th>Body Temp</th>
               <th>Heart Rate</th>
               <th>Risk Level</th>
-              <th>Test Accuracy</th>
             </tr>
           </thead>
           <tbody>
@@ -65,12 +54,11 @@ const ReadingsHistory = ({ readings }) => {
                       {reading.risk_level || 'N/A'}
                     </span>
                   </td>
-                  <td className="developer-metric">{formatTestAccuracy(reading.model_metrics)}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8">No readings found.</td>
+                <td colSpan="7">No readings found.</td>
               </tr>
             )}
           </tbody>
