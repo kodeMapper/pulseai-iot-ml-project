@@ -1,0 +1,19 @@
+.vital-signs-trends-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+}
+
+.vital-signs-trends-card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.chart-container {
+  width: 100%;
+  height: 300px; /* Fixed height for the chart */
+}

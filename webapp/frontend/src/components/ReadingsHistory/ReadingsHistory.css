@@ -1,0 +1,83 @@
+.readings-history-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.readings-history-card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+thead th {
+  background-color: #f8fafc;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+.risk-badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.risk-high {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.risk-medium {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.risk-low {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.risk-na {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.btn-predict {
+    background-color: #28a745; /* Green */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.btn-predict:hover {
+    background-color: #218838;
+}

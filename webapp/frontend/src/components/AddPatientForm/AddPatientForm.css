@@ -1,0 +1,36 @@
+.add-patient-form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.add-patient-form h3 {
+  margin-top: 0;
+}
+
+.add-patient-form form {
+  display: flex;
+  gap: 10px;
+}
+
+.add-patient-form input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+}
+
+.add-patient-form button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #3498db;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-patient-form button:hover {
+  background-color: #2980b9;
+}
