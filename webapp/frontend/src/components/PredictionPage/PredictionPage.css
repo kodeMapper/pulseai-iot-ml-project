@@ -33,10 +33,14 @@
 
 .prediction-title {
   margin: 0 0 var(--space-sm) 0;
+  font-family: var(--font-display);
   font-size: var(--font-size-xxl);
   font-weight: var(--font-weight-bold);
-  color: var(--color-text-primary);
   letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #0ea5e9 0%, #22d3ee 50%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .prediction-subtitle {

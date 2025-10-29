@@ -286,7 +286,9 @@ def predict_direct():
         systolic_bp = float(data.get('SystolicBP'))
         diastolic_bp = float(data.get('DiastolicBP'))
         blood_sugar = float(data.get('BS'))
-        body_temp = float(data.get('BodyTemp'))
+        # BodyTemp arrives from the frontend in Celsius; convert to Fahrenheit for safety checks/model
+        body_temp_c = float(data.get('BodyTemp'))
+        body_temp = (body_temp_c * 9/5) + 32
         heart_rate = float(data.get('HeartRate'))
         
         # SAFETY CHECK: Rule-based critical value detection

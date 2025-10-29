@@ -28,7 +28,7 @@ const PredictionPage = () => {
     systolic_bp: 'Systolic BP',
     diastolic_bp: 'Diastolic BP',
     blood_sugar: 'Blood Sugar',
-    body_temp: 'Body Temperature',
+  body_temp: 'Body Temperature (°C)',
     heart_rate: 'Heart Rate'
   };
 
@@ -263,7 +263,7 @@ const PredictionPage = () => {
             <InputField
               name="body_temp"
               label="Body Temperature"
-              unit="°F"
+              unit="°C"
               value={formData.body_temp}
               onChange={(e) => handleChange('body_temp', e.target.value)}
               error={errors.body_temp}

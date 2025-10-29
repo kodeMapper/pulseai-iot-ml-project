@@ -40,7 +40,7 @@ const ResultCard = ({ riskLevel, confidence, inputData, onNewAssessment, safetyO
       { label: 'Systolic BP', value: inputData.systolic_bp, unit: 'mmHg' },
       { label: 'Diastolic BP', value: inputData.diastolic_bp, unit: 'mmHg' },
       { label: 'Blood Sugar', value: inputData.blood_sugar, unit: 'mmol/L' },
-      { label: 'Body Temperature', value: inputData.body_temp, unit: '°F' },
+  { label: 'Body Temperature', value: inputData.body_temp, unit: '°C' },
       { label: 'Heart Rate', value: inputData.heart_rate, unit: 'bpm' }
     ];
   };

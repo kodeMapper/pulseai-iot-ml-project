@@ -37,13 +37,8 @@ const PatientDirectory = ({ patients }) => {
                 const parsedDate = normalizeTimestamp(patient.last_check_in);
                 return parsedDate ? parsedDate.toLocaleDateString() : 'N/A';
               })()}</td>
-              <td>
-                <Link to={`/patients/${patient._id}`} className="details-link">
-                  <button className="details-btn">
-                    <span className="details-icon">👤</span>
-                    <span>View Details</span>
-                  </button>
-                </Link>
+              <td className="actions-cell">
+                <Link to={`/patients/${patient._id}`} className="details-link subtle">View details</Link>
               </td>
             </tr>
           ))}

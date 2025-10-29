@@ -1,4 +1,6 @@
-/* Import Design System Variables */
+/* Import Display/Body Fonts and Design System Variables */
+/* Fonts: Inter (body), Space Grotesk (display), Poppins (alt display option) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import './variables.css';
 
 /* Global Styles */
