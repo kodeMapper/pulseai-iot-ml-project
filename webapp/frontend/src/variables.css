@@ -1,0 +1,135 @@
+/* Design System Variables - PulseAI */
+/* Based on UI_DESIGN_SPEC.md */
+
+:root {
+  /* ===== COLORS ===== */
+  
+  /* Primary Brand Colors */
+  --color-primary: #2196F3;
+  --color-primary-dark: #1976D2;
+  --color-primary-light: #BBDEFB;
+  
+  /* Risk Level Colors */
+  --color-risk-low: #4CAF50;
+  --color-risk-low-bg: #E8F5E9;
+  --color-risk-low-text: #2E7D32;
+  
+  --color-risk-medium: #FFC107;
+  --color-risk-medium-bg: #FFF8E1;
+  --color-risk-medium-text: #F57C00;
+  
+  --color-risk-high: #F44336;
+  --color-risk-high-bg: #FFEBEE;
+  --color-risk-high-text: #C62828;
+  
+  /* UI Colors */
+  --color-bg: #FAFAFA;
+  --color-surface: #FFFFFF;
+  --color-text-primary: #212121;
+  --color-text-secondary: #757575;
+  --color-text-disabled: #BDBDBD;
+  --color-border: #E0E0E0;
+  --color-border-focus: var(--color-primary);
+  
+  /* Semantic Colors */
+  --color-error: #D32F2F;
+  --color-error-bg: #FFEBEE;
+  --color-success: #388E3C;
+  --color-success-bg: #E8F5E9;
+  --color-warning: #FF9800;
+  --color-warning-bg: #FFF3E0;
+  --color-info: #2196F3;
+  --color-info-bg: #E3F2FD;
+  
+  /* ===== TYPOGRAPHY ===== */
+  
+  /* Font Families */
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'Roboto Mono', 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --font-size-h1: 32px;
+  --font-size-h2: 24px;
+  --font-size-h3: 18px;
+  --font-size-body: 16px;
+  --font-size-small: 14px;
+  --font-size-tiny: 12px;
+  
+  /* Font Weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  /* Line Heights */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+  
+  /* ===== SPACING ===== */
+  
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-xxl: 48px;
+  
+  /* ===== BORDERS ===== */
+  
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-round: 50%;
+  
+  --border-width: 1px;
+  --border-width-thick: 2px;
+  
+  /* ===== SHADOWS ===== */
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-focus: 0 0 0 3px rgba(33, 150, 243, 0.3);
+  
+  /* ===== TRANSITIONS ===== */
+  
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+  --transition-very-slow: 500ms ease;
+  
+  /* ===== Z-INDEX SCALE ===== */
+  
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  
+  /* ===== SIZING ===== */
+  
+  /* Input/Button Heights */
+  --input-height-sm: 40px;
+  --input-height-md: 48px;
+  --input-height-lg: 56px;
+  
+  /* Container Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-main: 800px; /* For prediction form */
+  
+  /* ===== BREAKPOINTS (for reference in media queries) ===== */
+  /* Use directly in @media queries, not as CSS variables */
+  /* Mobile: max-width: 767px */
+  /* Tablet: 768px - 1023px */
+  /* Desktop: 1024px+ */
+}
+
+/* Dark mode support can be added in future versions */

@@ -5,14 +5,12 @@ import AddReadingForm from '../AddReadingForm/AddReadingForm';
 import VitalSignsTrends from '../VitalSignsTrends/VitalSignsTrends';
 import PendingPrediction from '../PendingPrediction/PendingPrediction';
 import ReadingsHistory from '../ReadingsHistory/ReadingsHistory';
-import DevMetrics from '../DevMetrics/DevMetrics';
 import './PatientDetail.css';
 
 const PatientDetail = () => {
   const { id } = useParams();
   const [patient, setPatient] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [lastPredictionMetrics, setLastPredictionMetrics] = useState(null);
   const [isPredicting, setIsPredicting] = useState(false);
 
   const normalizeId = (value) => {
@@ -34,12 +32,6 @@ const PatientDetail = () => {
       }
       const data = await response.json();
       setPatient(data);
-      if (Array.isArray(data.readings)) {
-        const latestWithMetrics = data.readings.find(r => r?.model_metrics);
-        setLastPredictionMetrics(latestWithMetrics?.model_metrics || null);
-      } else {
-        setLastPredictionMetrics(null);
-      }
     } catch (error) {
       console.error("Failed to fetch patient:", error);
       setPatient(null);
@@ -95,8 +87,6 @@ const PatientDetail = () => {
           return { ...prevPatient, readings: updatedReadings };
         });
 
-        setLastPredictionMetrics(updatedReading.model_metrics || null);
-
         // Fetch fresh data to ensure charts and history stay in sync with the database
         await fetchPatient();
 
@@ -149,8 +139,6 @@ const PatientDetail = () => {
       <ReadingsHistory 
         readings={readingsForHistory} 
       />
-      
-      {lastPredictionMetrics && <DevMetrics metrics={lastPredictionMetrics} />}
 
       <AddReadingForm 
         isOpen={isModalOpen}

@@ -23,3 +23,43 @@ th, td {
 th {
   background-color: #f4f7f6;
 }
+
+/* Details Button Styles */
+.details-link {
+  text-decoration: none;
+}
+
+.details-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #91c6fcc6 1%);
+  color: var(--color-white);
+  border: none;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.details-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+}
+
+.details-btn:active {
+  transform: translateY(0);
+}
+
+.details-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.details-icon {
+  font-size: 18px;
+  line-height: 1;
+}

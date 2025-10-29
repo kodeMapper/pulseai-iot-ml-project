@@ -38,8 +38,11 @@ const PatientDirectory = ({ patients }) => {
                 return parsedDate ? parsedDate.toLocaleDateString() : 'N/A';
               })()}</td>
               <td>
-                <Link to={`/patients/${patient._id}`}>
-                  <button>Details</button>
+                <Link to={`/patients/${patient._id}`} className="details-link">
+                  <button className="details-btn">
+                    <span className="details-icon">👤</span>
+                    <span>View Details</span>
+                  </button>
                 </Link>
               </td>
             </tr>
