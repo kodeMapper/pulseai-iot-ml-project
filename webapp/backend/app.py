@@ -33,18 +33,19 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # We need to go up two levels to the project root 'PulseAi - ML project'
 project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
 
-model_path = os.path.join(project_root, 'models', 'tuned_gradient_boosting.pkl')
-scaler_path = os.path.join(project_root, 'models', 'enhanced_scaler.pkl')
-features_path = os.path.join(project_root, 'models', 'tuned_gradient_boosting_features.json')
-risk_map_path = os.path.join(project_root, 'models', 'risk_label_mapping.json')
+# Updated to use the best untuned XGBoost model
+model_path = os.path.join(project_root, 'models', 'best_xgboost_final.pkl')
+scaler_path = os.path.join(project_root, 'models', 'best_scaler_final.pkl')
 
 model = None
 scaler = None
-feature_names = None
-risk_map = None
+feature_names = ['Age', 'SystolicBP', 'DiastolicBP', 'BS', 'BodyTemp', 'HeartRate']
+risk_map = {0: "High", 1: "Low", 2: "Medium"}
 DEFAULT_MODEL_METRICS = {
-    "test_accuracy": "90.6%",
-    "high_risk_false_negative_rate": "13.0%"
+    "test_accuracy": "83.3%",
+    "high_risk_recall": "87%",
+    "high_risk_precision": "85%",
+    "model_type": "XGBoost (Default Parameters)"
 }
 
 
@@ -94,51 +95,28 @@ def get_latest_reading(patient_id_str):
 
 
 def load_model_assets(force_reload=False):
-    """Ensure the model, scaler, and feature metadata are loaded before inference."""
-    global model, scaler, feature_names, risk_map
+    """Ensure the model and scaler are loaded before inference."""
+    global model, scaler
 
-    if not force_reload and all([model, scaler, feature_names, risk_map]):
+    if not force_reload and model is not None and scaler is not None:
         return True
 
     logging.info(f"Attempting to load model from: {model_path}")
     logging.info(f"Attempting to load scaler from: {scaler_path}")
-    logging.info(f"Attempting to load features from: {features_path}")
-    logging.info(f"Attempting to load risk mapping from: {risk_map_path}")
+    logging.info(f"Using feature names: {feature_names}")
+    logging.info(f"Using risk mapping: {risk_map}")
 
     try:
         model = joblib.load(model_path)
         scaler = joblib.load(scaler_path)
-        with open(features_path, 'r') as f:
-            feature_payload = json.load(f)
-
-        if isinstance(feature_payload, dict):
-            feature_names_raw = feature_payload.get('feature_names') or feature_payload.get('features')
-        else:
-            feature_names_raw = feature_payload
-
-        if not feature_names_raw or not isinstance(feature_names_raw, (list, tuple)):
-            raise ValueError("Feature metadata must provide a list of feature names.")
-
-        feature_names = list(feature_names_raw)
-
-        risk_map = None
-        if os.path.exists(risk_map_path):
-            with open(risk_map_path, 'r') as f:
-                stored_mapping = json.load(f)
-            # JSON forces keys to strings – coerce back to ints
-            risk_map = {int(k): v for k, v in stored_mapping.items()}
-
-        if not risk_map:
-            logging.warning("Risk mapping file missing or empty; using default mapping.")
-            risk_map = {0: 'High', 1: 'Low', 2: 'Medium'}
         logging.info("ML model assets loaded successfully.")
+        logging.info(f"Model type: XGBoost (Default Parameters)")
+        logging.info(f"Accuracy: 83.3%, High-Risk Recall: 87%")
         return True
     except Exception as e:
         logging.error("Error loading ML assets.", exc_info=True)
         model = None
         scaler = None
-        feature_names = None
-        risk_map = None
         return False
 
 

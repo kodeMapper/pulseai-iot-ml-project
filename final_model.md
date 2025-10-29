@@ -73,15 +73,23 @@ The **XGBoost** model gave us the best combination of overall accuracy and high-
 
 ---
 
-### **Step 5: Finalizing the Model - Optimizing for Safety**
+### **Step 5: Finalizing the Model - The Importance of Not Over-Optimizing**
 
-Even though XGBoost was already doing well, we wanted to push it further to be as safe as possible.
+Even though XGBoost was already doing well, we tested hyperparameter tuning to see if we could improve it further.
 
 **What we did:**
 We used a technique called `GridSearchCV` to fine-tune the XGBoost model. We specifically instructed it to **adjust its internal settings to maximize the recall of the 'high risk' class.**
 
+**The Result:**
+Surprisingly, the tuned model performed **worse** than the default XGBoost:
+- Tuned Model: 73% accuracy, 81% high-risk recall
+- **Default XGBoost: 83.3% accuracy, 87% high-risk recall** ⭐
+
+**Important Lesson:**
+This demonstrates that hyperparameter tuning doesn't always improve results. Sometimes, the default settings are already optimal for your dataset. Over-tuning can actually harm performance.
+
 **Final Model Performance:**
-After tuning, our final XGBoost model produced the following results:
+Our final XGBoost model (with **default parameters**) produced the following results:
 
 | Risk Level | Precision | **Recall** | F1-Score |
 | ---------- | --------- | ---------- | -------- |
@@ -89,10 +97,14 @@ After tuning, our final XGBoost model produced the following results:
 | low        | 85%       | 80%        | 83%      |
 | mid        | 80%       | 84%        | 82%      |
 
+**Overall Accuracy: 83.3%**
+
 ---
 
 ### **Conclusion**
 
-Our final recommended model is an **XGBoost classifier, specifically tuned to maximize recall for high-risk patients.**
+Our final recommended model is an **XGBoost classifier with default parameters.**
 
-This model correctly identifies **87%** of all patients who are genuinely at high risk. While no model is perfect, this focus on recall ensures that we have built a system that prioritizes patient safety by significantly minimizing the chance of dangerous false negatives. The `pulseai.py` script now contains the code for this final, optimized model.
+This model correctly identifies **87%** of all patients who are genuinely at high risk, with an overall accuracy of **83.3%**. While no model is perfect, this performance ensures that we have built a system that prioritizes patient safety by significantly minimizing the chance of dangerous false negatives. 
+
+**Key Takeaway:** Always compare tuned models against baseline models. In this case, the default XGBoost was superior and is our final choice. The `pulseai.py` script now contains the code for this final, optimized model.
