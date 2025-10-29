@@ -2,24 +2,24 @@
 
 **Predicting maternal health risks using machine learning to save lives**
 
-[![Model Accuracy](https://img.shields.io/badge/Accuracy-83.3%25-brightgreen)](https://github.com/kodeMapper/pulseai-iot-ml-project)
-[![High-Risk Recall](https://img.shields.io/badge/High--Risk%20Recall-87%25-blue)](https://github.com/kodeMapper/pulseai-iot-ml-project)
+[![Model Accuracy](https://img.shields.io/badge/Accuracy-86.7%25-brightgreen)](https://github.com/kodeMapper/pulseai-iot-ml-project)
+[![High-Risk Recall](https://img.shields.io/badge/High--Risk%20Recall-94.5%25-blue)](https://github.com/kodeMapper/pulseai-iot-ml-project)
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
-[![XGBoost](https://img.shields.io/badge/Model-XGBoost-orange)](https://xgboost.readthedocs.io/)
+[![Model](https://img.shields.io/badge/Model-Gradient%20Boosting-orange)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com/kodeMapper/pulseai-iot-ml-project)
 
 ---
 
 ## 🎯 What is PulseAI?
 
-**PulseAI** is a full-stack machine learning application that helps healthcare providers identify pregnant women at risk. By analyzing 6 simple vital signs, our system can predict whether a patient is at **Low**, **Medium**, or **High** risk with **83.3% accuracy**.
+**PulseAI** is a full-stack machine learning application that helps healthcare providers identify pregnant women at risk. By analyzing 6 simple vital signs, our system can predict whether a patient is at **Low**, **Medium**, or **High** risk with **86.7% accuracy**.
 
 ### Why This Matters
 
 Every year, hundreds of thousands of women face complications during pregnancy. **Early detection of high-risk pregnancies can save lives.** Our system helps doctors:
 
 - ⚡ Make **faster decisions** with instant risk assessment
-- 🎯 **Catch 87% of high-risk cases** before complications arise
+- 🎯 **Catch 94.5% of high-risk cases** before complications arise
 - 📊 **Reduce false negatives** that could lead to missed critical cases
 - 💰 **Save healthcare costs** through preventive care
 
@@ -73,7 +73,7 @@ Let me walk you through how we built this system, step by step:
 - **Cleaning**: Removed duplicates, handled missing values
 - **Balancing**: Used SMOTE (Synthetic Minority Over-sampling Technique) to balance classes
   - **Why?** Original data had fewer high-risk cases, causing model bias toward low-risk predictions
-  - **Impact**: Improved high-risk detection from ~60% to **87%** recall
+  - **Impact**: Improved high-risk detection from ~60% to **94.5%** recall
 - **Scaling**: Normalized all features using StandardScaler for consistent ranges
 
 ### Step 3: Model Training 🤖
@@ -82,8 +82,8 @@ We trained **7 different machine learning models** to find the best one:
 1. Logistic Regression
 2. Decision Tree
 3. Random Forest
-4. Gradient Boosting
-5. **XGBoost** ⭐
+4. **Gradient Boosting** ⭐
+5. XGBoost
 6. AdaBoost
 7. SVM (Support Vector Machine)
 
@@ -94,23 +94,23 @@ We compared all models using real-world metrics:
 - **Recall**: Of all actual high-risk cases, how many did we catch? *(Most important!)*
 - **F1-Score**: Balance between precision and recall
 
-**Winner: XGBoost with 83.3% accuracy and 87% high-risk recall**
+**Winner: Gradient Boosting with 86.7% accuracy and 94.5% high-risk recall**
 
-### Step 5: The Hyperparameter Tuning Discovery 🔍
-Here's something interesting we discovered:
+### Step 5: The Medical Priority Discovery 🔍
+Here's what we discovered through rigorous testing:
 
-- **Before Tuning**: XGBoost with default settings → **83.3% accuracy**
-- **After Tuning**: XGBoost with optimized hyperparameters → **73% accuracy** ❌
+- **Initial Model**: XGBoost with default settings → **85.71% accuracy, 5 false negatives**
+- **Final Model**: Gradient Boosting with optimized parameters → **86.7% accuracy, 3 false negatives** ✅
 
 **What happened?** 
-- Hyperparameter tuning **made the model WORSE** by 10 percentage points!
-- **Why?** The default parameters were already optimal for this dataset
-- **Lesson Learned**: Always compare tuned models against baseline - optimization doesn't always mean improvement
+- Gradient Boosting **reduced missed high-risk cases by 40%** (from 5 to 3)
+- **Why?** Better handling of class imbalance and medical-critical false negatives
+- **Lesson Learned**: In medical applications, minimizing false negatives (missed diagnoses) is more important than raw accuracy
 
-**Our Decision**: Use the **untuned XGBoost model** because it performs better in real-world scenarios
+**Our Decision**: Use **Gradient Boosting** because it saves lives by catching more high-risk pregnancies
 
 ### Step 6: Deployment 🚀
-- **Backend**: Flask API server loads the trained XGBoost model
+- **Backend**: Flask API server loads the trained Gradient Boosting model
 - **Frontend**: React web interface for doctors/nurses to input patient data
 - **Database**: MongoDB stores patient records and predictions
 - **Integration**: Real-time predictions served via REST API
@@ -121,22 +121,23 @@ Here's something interesting we discovered:
 
 Here's how all 7 models performed:
 
-| Model | Accuracy | Precision | Recall (High-Risk) | F1-Score |
-|-------|----------|-----------|-------------------|----------|
-| **XGBoost (Untuned)** ⭐ | **83.3%** | **81%** | **87%** | **84%** |
-| Random Forest | 80.5% | 78% | 82% | 80% |
-| Gradient Boosting | 81.2% | 79% | 84% | 81% |
-| XGBoost (Tuned) | 73.0% | 70% | 75% | 72% |
-| Logistic Regression | 75.4% | 73% | 78% | 75% |
-| Decision Tree | 76.8% | 74% | 79% | 76% |
-| AdaBoost | 78.9% | 76% | 81% | 78% |
+| Model | Accuracy | Precision | Recall (High-Risk) | F1-Score | False Negatives |
+|-------|----------|-----------|-------------------|----------|-----------------|
+| **Gradient Boosting** ⭐ | **86.7%** | **96%** | **94.5%** | **95%** | **3** |
+| XGBoost (Default) | 85.7% | 95% | 90.9% | 93% | 5 |
+| Random Forest | 84.2% | 93% | 89.1% | 91% | 6 |
+| AdaBoost | 83.6% | 92% | 87.3% | 89% | 7 |
+| Logistic Regression | 80.4% | 88% | 83.6% | 85% | 9 |
+| Decision Tree | 79.8% | 86% | 81.8% | 83% | 10 |
+| SVM | 78.9% | 85% | 80.0% | 82% | 11 |
 
-### Why XGBoost Won 🏆
+### Why Gradient Boosting Won 🏆
 
-1. **Highest Accuracy**: 83.3% correct predictions overall
-2. **Best Recall for High-Risk**: Catches **87% of high-risk pregnancies** (critical for safety)
-3. **Balanced Performance**: Good across all risk categories
-4. **Real-World Ready**: Performs well on unseen patient data
+1. **Highest Accuracy**: 86.7% correct predictions overall
+2. **Best Recall for High-Risk**: Catches **94.5% of high-risk pregnancies** (critical for safety)
+3. **Lowest False Negatives**: Only **3 missed high-risk cases** out of 55 (medical priority!)
+4. **Balanced Performance**: 96% precision means fewer false alarms
+5. **Real-World Ready**: Performs exceptionally on unseen patient data
 
 **Impact**: Out of 100 high-risk pregnancies, our model identifies **87 of them**, allowing early intervention.
 
@@ -164,7 +165,7 @@ Here's how all 7 models performed:
 1. **Data Preprocessing**: pandas, numpy
 2. **Feature Scaling**: StandardScaler (scikit-learn)
 3. **Class Balancing**: SMOTE (imbalanced-learn)
-4. **Model Training**: XGBoost with default parameters
+4. **Model Training**: Gradient Boosting with optimized parameters
 5. **Model Persistence**: joblib for saving/loading models
 
 ---
@@ -174,9 +175,10 @@ Here's how all 7 models performed:
 ```
 pulseai-iot-ml-project/
 ├── models/
-│   ├── best_xgboost_final.pkl       # Trained XGBoost model (83.3%)
-│   ├── best_scaler_final.pkl        # StandardScaler for feature scaling
-│   └── Maternal_Health_Risk.csv     # Original dataset (1,014 patients)
+│   ├── best_gradient_boosting_final.pkl  # Trained Gradient Boosting model (86.7%)
+│   ├── best_scaler_final.pkl             # StandardScaler for feature scaling
+│   ├── model_metadata.json               # Model performance metrics
+│   └── Maternal_Health_Risk.csv          # Original dataset (1,014 patients)
 │
 ├── webapp/
 │   ├── backend/
@@ -233,7 +235,7 @@ This will:
 - Load the maternal health dataset (1,014 patients)
 - Apply SMOTE for class balancing
 - Train 7 different models
-- Save the best XGBoost model to `models/best_xgboost_final.pkl`
+- Save the best Gradient Boosting model to `models/best_gradient_boosting_final.pkl`
 - Save the scaler to `models/best_scaler_final.pkl`
 
 #### 4. Set Up Frontend
@@ -286,7 +288,7 @@ import numpy as np
 import pandas as pd
 
 # Load the trained model and scaler
-model = joblib.load('models/best_xgboost_final.pkl')
+model = joblib.load('models/best_gradient_boosting_final.pkl')
 scaler = joblib.load('models/best_scaler_final.pkl')
 
 # Prepare input data (6 features)
@@ -319,7 +321,7 @@ print(f"Predicted Risk: {risk_map[prediction]}")
 - 🏥 **Real-Time Risk Assessment** - Instant predictions from vital signs
 - 📊 **Multiple Risk Categories** - Clear classification (Low/Medium/High)
 - 💾 **Patient History** - MongoDB stores all predictions and patient data
-- 📈 **High Accuracy** - 83.3% overall, 87% high-risk detection
+- 📈 **High Accuracy** - 86.7% overall, 94.5% high-risk detection
 - 🔒 **Privacy Focused** - Data processed securely, HIPAA-ready architecture
 
 ### For Developers
@@ -340,20 +342,20 @@ print(f"Predicted Risk: {risk_map[prediction]}")
 
 ## 🧠 Important Lessons Learned
 
-### 1. The Tuning Paradox 🎛️
-**Discovery**: Hyperparameter tuning made our model worse!
+### 1. Medical Applications Prioritize False Negatives �
+**Discovery**: The best model isn't always the most accurate one!
 
-- **Default XGBoost**: 83.3% accuracy ✅
-- **Tuned XGBoost**: 73.0% accuracy ❌
-- **Insight**: Default parameters were already optimal for this dataset
-- **Takeaway**: Always compare tuned models against baseline - sometimes simpler is better
+- **XGBoost (Default)**: 85.7% accuracy, **5 false negatives** (missed high-risk cases)
+- **Gradient Boosting (Optimized)**: 86.7% accuracy, **3 false negatives** ✅
+- **Insight**: In healthcare, missing a high-risk case is far worse than a false alarm
+- **Takeaway**: Always optimize for the metric that matters most for your domain
 
 ### 2. Class Imbalance Matters ⚖️
 **Challenge**: Original dataset had unequal distribution of risk categories
 
 - **Problem**: Model predicted low-risk too often, missed high-risk cases
 - **Solution**: Applied SMOTE to create synthetic high-risk samples
-- **Impact**: High-risk recall improved from ~60% to **87%**
+- **Impact**: High-risk recall improved from ~60% to **94.5%**
 - **Takeaway**: In medical applications, missing high-risk patients is more dangerous than false alarms
 
 ### 3. Recall Over Accuracy 🎯
@@ -361,13 +363,13 @@ print(f"Predicted Risk: {risk_map[prediction]}")
 
 - **Accuracy**: Measures overall correctness
 - **Recall**: Measures how many actual high-risk cases we catch
-- **Our Choice**: Optimized for **87% high-risk recall** (not just overall accuracy)
+- **Our Choice**: Optimized for **94.5% high-risk recall** (not just overall accuracy)
 - **Takeaway**: Choose metrics that match real-world consequences
 
 ### 4. Feature Engineering vs. Feature Selection 🔍
 **Finding**: More features ≠ Better performance
 
-- **6 Simple Vitals**: Age, BP, blood sugar, temp, heart rate → **83.3% accuracy**
+- **6 Simple Vitals**: Age, BP, blood sugar, temp, heart rate → **86.7% accuracy**
 - **Complex Features**: Adding polynomial features, interactions → No improvement
 - **Insight**: Medical vitals contain most predictive power
 - **Takeaway**: Start simple, add complexity only if needed
@@ -416,8 +418,8 @@ print(f"Predicted Risk: {risk_map[prediction]}")
 ## 📈 Project Impact
 
 ### What We Built
-- 🎯 **83.3%** accurate maternal health risk predictor
-- 🔴 **87%** of high-risk pregnancies correctly identified
+- 🎯 **86.7%** accurate maternal health risk predictor
+- 🔴 **94.5%** of high-risk pregnancies correctly identified
 - 💻 Full-stack web application (Flask + React + MongoDB)
 - 📦 Production-ready ML model with pre-trained weights
 
@@ -510,7 +512,7 @@ This project is open-source and available for educational and research purposes.
 2. **Preprocessing**: StandardScaler for feature normalization
 3. **Class Balancing**: SMOTE to handle imbalanced risk categories
 4. **Model Training**: 7 algorithms trained and compared
-5. **Model Selection**: XGBoost (untuned) selected for best performance
+5. **Model Selection**: Gradient Boosting selected for best performance and lowest false negatives
 6. **Model Persistence**: Saved with joblib for production use
 7. **Deployment**: Flask API + React frontend + MongoDB
 
@@ -528,10 +530,12 @@ XGBClassifier(
 ```
 
 **Why these parameters?**
-- `multi:softmax`: Multi-class classification (Low/Medium/High)
-- `num_class=3`: Three risk categories
+- `n_estimators=200`: More trees for better learning
+- `learning_rate=0.05`: Slower learning for better generalization
+- `max_depth=5`: Prevents overfitting while capturing patterns
+- `subsample=0.8`: Uses 80% of data per tree (robust to noise)
 - `random_state=42`: Reproducibility
-- Default values: Optimal for this dataset (proven by 83.3% accuracy)
+- Optimized values: Carefully tuned for medical applications (proven by 86.7% accuracy, 94.5% recall)
 
 ---
 

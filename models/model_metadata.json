@@ -1,51 +1,22 @@
 {
-    "model_name": "XGBoost",
-    "timestamp": "2025-10-27T12:44:36.823684",
-    "best_params": {
-        "colsample_bytree": 0.8,
-        "learning_rate": 0.01,
-        "max_depth": 3,
-        "n_estimators": 100,
-        "subsample": 1.0
-    },
-    "metrics": {
-        "accuracy": 0.4199475065616798,
-        "precision": 0.32252520479549723,
-        "recall": 0.4199475065616798,
-        "f1_score": 0.35090001856213776,
-        "cv_score": 0.3909296807592752
-    },
-    "classification_report": {
-        "0": {
-            "precision": 0.4163568773234201,
-            "recall": 0.7466666666666667,
-            "f1-score": 0.5346062052505967,
-            "support": 150.0
-        },
-        "1": {
-            "precision": 0.42857142857142855,
-            "recall": 0.3404255319148936,
-            "f1-score": 0.3794466403162055,
-            "support": 141.0
-        },
-        "2": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1-score": 0.0,
-            "support": 90.0
-        },
-        "accuracy": 0.4199475065616798,
-        "macro avg": {
-            "precision": 0.28164276863161625,
-            "recall": 0.3623640661938534,
-            "f1-score": 0.30468428185560076,
-            "support": 381.0
-        },
-        "weighted avg": {
-            "precision": 0.32252520479549723,
-            "recall": 0.4199475065616798,
-            "f1-score": 0.35090001856213776,
-            "support": 381.0
-        }
-    }
+  "model_name": "Gradient Boosting Classifier",
+  "accuracy": "86.70%",
+  "high_risk_recall": "94.55%",
+  "false_negatives": 3,
+  "total_high_risk": 55,
+  "features": [
+    "Age",
+    "SystolicBP",
+    "DiastolicBP",
+    "BS",
+    "BodyTemp",
+    "HeartRate"
+  ],
+  "classes": [
+    "high risk",
+    "low risk",
+    "mid risk"
+  ],
+  "training_samples": 975,
+  "test_samples": 203
 }

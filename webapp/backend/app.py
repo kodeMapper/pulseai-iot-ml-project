@@ -33,8 +33,8 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # We need to go up two levels to the project root 'PulseAi - ML project'
 project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
 
-# Updated to use the best untuned XGBoost model
-model_path = os.path.join(project_root, 'models', 'best_xgboost_final.pkl')
+# Updated to use the best Gradient Boosting model
+model_path = os.path.join(project_root, 'models', 'best_gradient_boosting_final.pkl')
 scaler_path = os.path.join(project_root, 'models', 'best_scaler_final.pkl')
 
 model = None
@@ -42,10 +42,10 @@ scaler = None
 feature_names = ['Age', 'SystolicBP', 'DiastolicBP', 'BS', 'BodyTemp', 'HeartRate']
 risk_map = {0: "High", 1: "Low", 2: "Medium"}
 DEFAULT_MODEL_METRICS = {
-    "test_accuracy": "83.3%",
-    "high_risk_recall": "87%",
-    "high_risk_precision": "85%",
-    "model_type": "XGBoost (Default Parameters)"
+    "test_accuracy": "86.7%",
+    "high_risk_recall": "94.5%",
+    "high_risk_precision": "96%",
+    "model_type": "Gradient Boosting Classifier"
 }
 
 

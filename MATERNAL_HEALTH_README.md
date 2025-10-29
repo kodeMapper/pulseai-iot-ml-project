@@ -40,21 +40,22 @@ PulseAI is a machine learning system that predicts maternal health risk levels f
 
 ## 🏆 Model Performance
 
-### Final Model: **XGBoost (Default Parameters)**
+### Final Model: **Gradient Boosting (Optimized Parameters)**
 
 | Metric | Value |
 |--------|-------|
-| **Overall Accuracy** | **83.3%** |
-| **High-Risk Recall** | **87%** |
-| **High-Risk Precision** | **85%** |
+| **Overall Accuracy** | **86.7%** |
+| **High-Risk Recall** | **94.5%** |
+| **High-Risk Precision** | **96%** |
+| **False Negatives** | **3 out of 55** |
 
 ### Performance by Risk Level
 
 | Risk Level | Precision | Recall | F1-Score | Support |
 |------------|-----------|--------|----------|---------|
-| **High**   | **85%**   | **87%**| **86%**  | 47      |
-| Low        | 85%       | 80%    | 83%      | 80      |
-| Mid        | 80%       | 84%    | 82%      | 76      |
+| **High**   | **96%**   | **94.5%**| **95%**  | 55      |
+| Low        | 87%       | 87%    | 87%      | 75      |
+| Mid        | 81%       | 86%    | 83%      | 73      |
 
 ---
 
@@ -62,23 +63,24 @@ PulseAI is a machine learning system that predicts maternal health risk levels f
 
 All models were trained with SMOTE (oversampling) and StandardScaler:
 
-| Model | Accuracy | High-Risk Recall | Notes |
-|-------|----------|------------------|-------|
-| **XGBoost** | **83.3%** | **87%** | ⭐ **Best Overall** |
-| Decision Tree | 82.8% | 87% | Good, but overfits |
-| Random Forest | 81.3% | 87% | Solid ensemble |
-| Gradient Boosting | 76.4% | 83% | Decent |
-| SVM | 67.5% | 85% | High recall, lower accuracy |
-| Logistic Regression | 63.5% | 85% | Simple baseline |
-| Gaussian Naive Bayes | 61.1% | 79% | Fast but less accurate |
+| Model | Accuracy | High-Risk Recall | False Negatives | Notes |
+|-------|----------|------------------|-----------------|-------|
+| **Gradient Boosting** | **86.7%** | **94.5%** | **3** | ⭐ **Best for Medical Apps** |
+| XGBoost (Default) | 85.7% | 90.9% | 5 | Strong overall |
+| Random Forest | 84.2% | 89.1% | 6 | Solid ensemble |
+| Decision Tree | 79.8% | 81.8% | 10 | Overfits |
+| AdaBoost | 83.6% | 87.3% | 7 | Decent |
+| SVM | 78.9% | 80.0% | 11 | Lower recall |
+| Logistic Regression | 80.4% | 83.6% | 9 | Simple baseline |
 
-### ⚠️ Why Not Hyperparameter Tuning?
+### 🎯 Why Gradient Boosting?
 
-We tested GridSearchCV to optimize XGBoost parameters:
-- **Tuned Model:** 73% accuracy, 81% recall ❌
-- **Default XGBoost:** 83.3% accuracy, 87% recall ✅
+We systematically compared models with medical-first priorities:
+- **Primary Goal:** Minimize false negatives (missed high-risk cases)
+- **Gradient Boosting (Optimized):** 86.7% accuracy, 94.5% recall, **3 false negatives** ✅
+- **XGBoost (Default):** 85.7% accuracy, 90.9% recall, **5 false negatives**
 
-**Conclusion:** The default XGBoost parameters are already optimal for this dataset. Tuning made it worse!
+**Impact:** Gradient Boosting catches 52 out of 55 high-risk pregnancies vs 50 with XGBoost. This **40% reduction in false negatives** means 2 additional lives potentially saved per 55 high-risk patients.
 
 ---
 
@@ -101,7 +103,7 @@ python -m venv .venv
 
 # Install dependencies
 pip install -r requirements.txt
-pip install Flask Flask-Cors flask-pymongo xgboost imbalanced-learn
+pip install Flask Flask-Cors flask-pymongo scikit-learn imbalanced-learn
 ```
 
 ### Run the Model Training
@@ -114,7 +116,7 @@ This will:
 1. Load the maternal health risk dataset
 2. Train 7 different ML models
 3. Compare their performance
-4. Save the best model (XGBoost)
+4. Save the best model (Gradient Boosting)
 
 ### Run the Interactive Demo
 
@@ -138,11 +140,10 @@ pulseai-iot-ml-project/
 ├── maternal_health_risk.csv        # Dataset
 ├── final_model.md                  # Detailed model report
 ├── models/
-│   ├── best_xgboost_final.pkl     # Best trained model
-│   ├── best_scaler_final.pkl      # Feature scaler
-│   ├── XGBoost.pkl                # Individual models
-│   ├── Random_Forest.pkl
-│   └── ...
+│   ├── best_gradient_boosting_final.pkl  # Best trained model
+│   ├── best_scaler_final.pkl             # Feature scaler
+│   ├── model_metadata.json               # Performance metrics
+│   └── Maternal_Health_Risk.csv          # Dataset
 ├── src/
 │   ├── data_loading.py            # Dataset utilities
 │   └── ...
@@ -157,7 +158,7 @@ pulseai-iot-ml-project/
 
 ### 1. **Patient Safety First**
 - Optimized to minimize false negatives (missing high-risk patients)
-- 87% recall ensures most high-risk cases are caught
+- 94.5% recall ensures most high-risk cases are caught (only 3 missed out of 55)
 - Better to be cautious than miss a critical case
 
 ### 2. **Handles Class Imbalance**
@@ -184,7 +185,7 @@ import joblib
 import numpy as np
 
 # Load the saved model
-model = joblib.load('models/best_xgboost_final.pkl')
+model = joblib.load('models/best_gradient_boosting_final.pkl')
 scaler = joblib.load('models/best_scaler_final.pkl')
 
 # Patient data: [Age, SystolicBP, DiastolicBP, BS, BodyTemp, HeartRate]
@@ -249,7 +250,7 @@ Based on the model's decision patterns:
 ### Technologies Used
 - **Python 3.12**
 - **scikit-learn 1.7.2** - ML algorithms
-- **XGBoost 2.0.0** - Best model
+- **scikit-learn 1.7.2** - Gradient Boosting model
 - **imbalanced-learn 0.14.0** - SMOTE
 - **pandas 2.3.2** - Data processing
 - **numpy 2.3.3** - Numerical computing

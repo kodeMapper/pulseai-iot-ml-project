@@ -2,7 +2,7 @@ import joblib
 import pandas as pd
 
 # Load model and scaler
-model = joblib.load('models/best_xgboost_final.pkl')
+model = joblib.load('models/best_gradient_boosting_final.pkl')
 scaler = joblib.load('models/best_scaler_final.pkl')
 
 # Risk mapping
