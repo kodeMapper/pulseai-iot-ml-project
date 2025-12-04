@@ -223,3 +223,71 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .patient-header-card {
+    flex-direction: column;
+    text-align: center;
+    padding: var(--space-md);
+  }
+
+  .patient-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 28px;
+    margin-right: 0;
+    margin-bottom: var(--space-md);
+  }
+
+  .patient-info {
+    width: 100%;
+  }
+
+  .patient-info h1 {
+    font-size: var(--font-size-lg);
+  }
+
+  .patient-info p {
+    justify-content: center;
+    font-size: var(--font-size-xs);
+  }
+
+  .name-row {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .edit-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .edit-form {
+    width: 100%;
+  }
+
+  .edit-field input {
+    width: 100%;
+  }
+
+  .edit-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .patient-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 36px;
+    margin-right: var(--space-lg);
+  }
+}

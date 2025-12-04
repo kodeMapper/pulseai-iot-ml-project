@@ -66,3 +66,45 @@ html {
   outline: var(--border-width-thick) solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* ===== GLOBAL MOBILE RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: none; /* Disable snap on mobile for smoother experience */
+  }
+
+  body {
+    font-size: var(--font-size-sm);
+  }
+
+  /* Prevent zoom on iOS when focusing inputs */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Better touch targets */
+  button, 
+  a, 
+  input[type="submit"],
+  input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Hide scrollbar on mobile but keep scroll functionality */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+
+/* Safe area padding for notched devices */
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    body {
+      padding-left: max(0px, env(safe-area-inset-left));
+      padding-right: max(0px, env(safe-area-inset-right));
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+  }
+}

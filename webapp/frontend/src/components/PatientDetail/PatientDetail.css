@@ -93,3 +93,55 @@
   font-size: 18px;
   color: var(--color-text-secondary);
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .patient-detail-container {
+    padding: var(--space-md);
+  }
+
+  .toolbar {
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: stretch;
+  }
+
+  .back-button {
+    justify-content: center;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+    padding: 12px 20px;
+  }
+
+  .real-time-section {
+    padding: var(--space-md);
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: stretch;
+  }
+
+  .section-header h3 {
+    text-align: center;
+  }
+
+  .actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .actions .btn {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .patient-detail-container {
+    padding: var(--space-lg);
+  }
+}

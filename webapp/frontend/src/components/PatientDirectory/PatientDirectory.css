@@ -322,3 +322,71 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .patient-directory {
+    margin-top: var(--space-md);
+    padding-bottom: var(--space-lg);
+  }
+
+  .creative-title {
+    font-size: 2rem;
+  }
+
+  .directory-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .search-bar {
+    min-width: 100%;
+    width: 100%;
+  }
+
+  .sort-dropdown {
+    width: 100%;
+  }
+
+  .sort-dropdown select {
+    flex: 1;
+  }
+
+  .patient-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+
+  .patient-avatar-large {
+    width: 80px;
+    height: 80px;
+  }
+
+  .patient-avatar-large .avatar-initial {
+    font-size: 32px;
+  }
+
+  .patient-name {
+    font-size: 16px;
+  }
+
+  .patient-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .patient-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .creative-title {
+    font-size: 2.5rem;
+  }
+}

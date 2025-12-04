@@ -44,3 +44,34 @@
   /* Fallback for text color if gradient clip fails or for better contrast */
   text-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .summary-cards {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .card {
+    padding: var(--space-md);
+  }
+
+  .card h3 {
+    font-size: var(--font-size-sm);
+  }
+
+  .card p {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .summary-cards {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    flex: 1 1 calc(50% - var(--space-md));
+    min-width: 150px;
+  }
+}

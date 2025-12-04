@@ -56,3 +56,26 @@
   margin-bottom: 5px !important;
   font-weight: 600 !important;
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .vital-signs-trends-card {
+    padding: var(--space-md);
+  }
+
+  .vital-signs-trends-card h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-md);
+  }
+
+  .chart-container {
+    height: 220px;
+    margin: 0 calc(-1 * var(--space-sm));
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .chart-container {
+    height: 260px;
+  }
+}

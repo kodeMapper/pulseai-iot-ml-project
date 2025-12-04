@@ -100,3 +100,39 @@ tbody tr:hover {
     box-shadow: 0 0 15px rgba(0, 255, 157, 0.4);
     transform: translateY(-1px);
 }
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 767px) {
+  .readings-history-card {
+    padding: var(--space-md);
+  }
+
+  .readings-history-card h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-md);
+  }
+
+  .table-container {
+    margin: 0 calc(-1 * var(--space-md));
+    padding: 0 var(--space-sm);
+  }
+
+  table {
+    font-size: var(--font-size-xs);
+    min-width: 600px; /* Force horizontal scroll on mobile */
+  }
+
+  th, td {
+    padding: 8px 10px;
+  }
+
+  .risk-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .btn-predict {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}

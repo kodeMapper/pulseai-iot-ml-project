@@ -45,6 +45,8 @@ webapp/backend/predict.log
 # Environment
 .env
 *.env.local
+webapp/backend/.env
+webapp/frontend/.env.local
 
 # Progress/Phase Documentation (keep locally)
 PHASE1_COMPLETE.md

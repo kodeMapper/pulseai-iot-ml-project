@@ -41,7 +41,11 @@ CORS(app, resources={
 })
 
 # --- Database Configuration ---
-app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb+srv://admin:adminkapassword@cluster0.kgfpket.mongodb.net/PulseAi")
+# IMPORTANT: Set MONGO_URI environment variable in production
+mongo_uri = os.getenv("MONGO_URI")
+if not mongo_uri:
+    raise ValueError("MONGO_URI environment variable is required. Please set it in your .env file or environment.")
+app.config["MONGO_URI"] = mongo_uri
 mongo = PyMongo(app)
 
 # --- ML Model Loading ---
