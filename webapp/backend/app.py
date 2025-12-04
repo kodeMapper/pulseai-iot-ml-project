@@ -587,6 +587,21 @@ def predict_for_reading(reading_id):
     return jsonify(updated_reading)
 
 
+# Root endpoint
+@app.route('/', methods=['GET'])
+def root():
+    return jsonify({
+        "service": "PulseAI Backend API",
+        "status": "running",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "patients": "/api/patients",
+            "predict": "/api/predict"
+        }
+    })
+
+
 # Health check endpoint for deployment
 @app.route('/health', methods=['GET'])
 def health_check():
