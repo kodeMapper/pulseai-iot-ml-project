@@ -15,12 +15,12 @@ export const PageTransition = ({ children }) => (
 );
 
 // Stagger Container for Lists/Grids
-export const StaggerContainer = ({ children, delay = 0, className = "" }) => (
+export const StaggerContainer = ({ children, delay = 0, className = "", animationKey = "" }) => (
   <motion.div
+    key={animationKey}
     className={className}
     initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, margin: "-50px" }}
+    animate="visible"
     variants={{
       hidden: { opacity: 0 },
       visible: {

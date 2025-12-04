@@ -14,10 +14,40 @@ const normalizeTimestamp = (value) => {
   return null;
 };
 
-const PatientDirectory = ({ patients }) => {
+const PatientDirectory = ({ patients, onDeletePatient }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('name'); // 'name', 'risk', 'age'
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDelete = async (e, patientId, patientName) => {
+    e.stopPropagation(); // Prevent card click navigation
+    
+    if (!window.confirm(`Are you sure you want to delete ${patientName}? This will also delete all their readings.`)) {
+      return;
+    }
+    
+    setDeletingId(patientId);
+    
+    try {
+      const response = await fetch(`/api/patients/${patientId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        if (onDeletePatient) {
+          onDeletePatient(patientId);
+        }
+      } else {
+        alert('Failed to delete patient');
+      }
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      alert('Error deleting patient');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const filteredAndSortedPatients = useMemo(() => {
     if (!patients) return [];
@@ -89,42 +119,62 @@ const PatientDirectory = ({ patients }) => {
           <p>No patients found matching your criteria.</p>
         </div>
       ) : (
-        <StaggerContainer className="patient-grid">
+        <StaggerContainer className="patient-grid" animationKey={`grid-${filteredAndSortedPatients.length}-${searchTerm}`}>
           {filteredAndSortedPatients.map((patient) => (
             <FadeUpItem key={patient._id}>
               <GlowCard 
-                className="patient-card"
+                className={`patient-card ${deletingId === patient._id ? 'deleting' : ''}`}
                 onClick={() => navigate(`/patients/${patient._id}`)}
               >
-                <div className="patient-card-header">
-                  <div className="patient-avatar-small">
-                    {patient.name.charAt(0)}
+                {/* Large centered photo */}
+                <div className="patient-photo-container">
+                  <div className="patient-avatar-large">
+                    {patient.photo ? (
+                      <img src={patient.photo} alt={patient.name} className="avatar-photo" />
+                    ) : (
+                      <span className="avatar-initial">{patient.name.charAt(0)}</span>
+                    )}
                   </div>
-                  <div className="patient-risk-badge" data-risk={patient.risk_level}>
+                  <div className="patient-risk-indicator" data-risk={patient.risk_level}>
+                    <span className="risk-dot"></span>
                     {patient.risk_level || 'Unknown'}
                   </div>
                 </div>
                 
-                <h3 className="patient-name">{patient.name}</h3>
-                
-                <div className="patient-stats">
-                  <div className="stat">
-                    <span className="label">Age</span>
-                    <span className="value">{patient.age}</span>
-                  </div>
-                  <div className="stat">
-                    <span className="label">Last Check-in</span>
-                    <span className="value">
-                      {(() => {
-                        const parsedDate = normalizeTimestamp(patient.last_check_in);
-                        return parsedDate ? parsedDate.toLocaleDateString() : 'N/A';
-                      })()}
-                    </span>
+                <div className="patient-card-body">
+                  <h3 className="patient-name">{patient.name}</h3>
+                  
+                  <div className="patient-meta">
+                    <div className="meta-item">
+                      <span className="meta-icon">👤</span>
+                      <span>{patient.age} years</span>
+                    </div>
+                    <div className="meta-item">
+                      <span className="meta-icon">📅</span>
+                      <span>
+                        {(() => {
+                          const parsedDate = normalizeTimestamp(patient.last_check_in);
+                          return parsedDate ? parsedDate.toLocaleDateString() : 'No check-in';
+                        })()}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="card-action">
-                  <span>View Profile &rarr;</span>
+                <div className="patient-card-actions">
+                  <button 
+                    className="action-btn view-btn"
+                    onClick={(e) => { e.stopPropagation(); navigate(`/patients/${patient._id}`); }}
+                  >
+                    View Profile
+                  </button>
+                  <button 
+                    className="action-btn delete-btn"
+                    onClick={(e) => handleDelete(e, patient._id, patient.name)}
+                    disabled={deletingId === patient._id}
+                  >
+                    {deletingId === patient._id ? '...' : '🗑️'}
+                  </button>
                 </div>
               </GlowCard>
             </FadeUpItem>

@@ -34,6 +34,10 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeletePatient = (patientId) => {
+    setPatients(prevPatients => prevPatients.filter(p => p._id !== patientId));
+  };
+
   return (
     <PageTransition>
       <div className="dashboard">
@@ -71,7 +75,7 @@ const Dashboard = () => {
         
         {/* Section 2: Patient Directory - Appears after scroll */}
         <section className="dashboard-directory-section">
-          <PatientDirectory patients={patients} />
+          <PatientDirectory patients={patients} onDeletePatient={handleDeletePatient} />
         </section>
       </div>
     </PageTransition>

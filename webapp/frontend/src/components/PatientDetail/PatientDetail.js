@@ -131,7 +131,11 @@ const PatientDetail = () => {
 
         <StaggerContainer>
           <FadeUpItem>
-            <PatientHeader patient={patient} />
+            <PatientHeader 
+              patient={patient} 
+              onPhotoUpdate={(photo) => setPatient(prev => ({ ...prev, photo }))}
+              onPatientUpdate={(updatedPatient) => setPatient(prev => ({ ...prev, ...updatedPatient }))}
+            />
           </FadeUpItem>
 
           <FadeUpItem>

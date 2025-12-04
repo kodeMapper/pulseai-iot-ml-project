@@ -156,92 +156,169 @@
 .patient-card {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  padding: 24px;
-  /* Removed CSS transition/hover to let Framer Motion handle it */
-}
-
-.patient-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-.patient-avatar-small {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--gradient-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #000;
-  font-size: 18px;
-}
-
-.patient-risk-badge {
-  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.patient-risk-badge[data-risk="High"] {
-  background: rgba(255, 0, 85, 0.2);
-  color: #ff0055;
-  border: 1px solid rgba(255, 0, 85, 0.3);
-  box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
-}
-
-.patient-risk-badge[data-risk="Low"] {
-  background: rgba(0, 255, 157, 0.1);
-  color: #00ff9d;
-  border: 1px solid rgba(0, 255, 157, 0.2);
-}
-
-.patient-name {
-  font-size: 20px;
-  margin: 0 0 16px 0;
-  color: #fff;
-  font-weight: 600;
-}
-
-.patient-stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.stat {
+  padding: 0;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-.stat .label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 4px;
+.patient-card.deleting {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.stat .value {
-  font-size: 14px;
-  color: #ddd;
-  font-weight: 500;
+/* Photo Container - Top Section */
+.patient-photo-container {
+  position: relative;
+  padding: 24px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(0, 242, 255, 0.05) 0%, transparent 100%);
 }
 
-.card-action {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 16px;
-  text-align: right;
+.patient-avatar-large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 242, 255, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.patient-avatar-large .avatar-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.patient-avatar-large .avatar-initial {
+  font-size: 40px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* Risk Indicator */
+.patient-risk-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.risk-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #888;
+}
+
+.patient-risk-indicator[data-risk="High"] {
+  color: #ff4d6d;
+}
+.patient-risk-indicator[data-risk="High"] .risk-dot {
+  background: #ff4d6d;
+  box-shadow: 0 0 10px #ff4d6d;
+}
+
+.patient-risk-indicator[data-risk="Medium"] {
+  color: #ffc857;
+}
+.patient-risk-indicator[data-risk="Medium"] .risk-dot {
+  background: #ffc857;
+  box-shadow: 0 0 10px #ffc857;
+}
+
+.patient-risk-indicator[data-risk="Low"] {
+  color: #00ff9d;
+}
+.patient-risk-indicator[data-risk="Low"] .risk-dot {
+  background: #00ff9d;
+  box-shadow: 0 0 10px #00ff9d;
+}
+
+/* Card Body */
+.patient-card-body {
+  padding: 0 24px 16px;
+  text-align: center;
+  flex: 1;
+}
+
+.patient-name {
+  font-size: 18px;
+  margin: 0 0 12px 0;
+  color: #fff;
+  font-weight: 600;
+}
+
+.patient-meta {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.meta-icon {
+  font-size: 12px;
+}
+
+/* Card Actions */
+.patient-card-actions {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.action-btn {
+  flex: 1;
+  padding: 14px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
   font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-btn {
+  color: var(--color-primary);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.view-btn:hover {
+  background: rgba(0, 242, 255, 0.1);
+}
+
+.delete-btn {
+  color: rgba(255, 255, 255, 0.4);
+  flex: 0 0 50px;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 77, 109, 0.1);
+  color: #ff4d6d;
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
