@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Summary from '../Summary/Summary';
 import PatientDirectory from '../PatientDirectory/PatientDirectory';
 import AddPatientForm from '../AddPatientForm/AddPatientForm';
+import { PageTransition, StaggerContainer, FadeUpItem } from '../common/MotionWrappers';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -33,11 +35,46 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="dashboard">
-      <Summary patients={patients} />
-      <AddPatientForm onAddPatient={handleAddPatient} />
-      <PatientDirectory patients={patients} />
-    </div>
+    <PageTransition>
+      <div className="dashboard">
+        {/* Section 1: Hero / Stats / Actions - Takes up full viewport height */}
+        <section className="dashboard-hero-section">
+          <StaggerContainer>
+            <FadeUpItem>
+              <div className="hero-header">
+                <h1 className="hero-title">Maternal Health Monitor</h1>
+                <p className="hero-subtitle">Real-time IoT analytics & risk prediction</p>
+              </div>
+            </FadeUpItem>
+
+            <FadeUpItem>
+              <Summary patients={patients} />
+            </FadeUpItem>
+            
+            <FadeUpItem>
+              <div className="dashboard-actions">
+                <AddPatientForm onAddPatient={handleAddPatient} />
+              </div>
+            </FadeUpItem>
+
+            <motion.div 
+              className="scroll-indicator"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, y: [0, 10, 0] }}
+              transition={{ delay: 2, duration: 2, repeat: Infinity }}
+            >
+              <span>Scroll for Patients</span>
+              <div className="arrow-down">↓</div>
+            </motion.div>
+          </StaggerContainer>
+        </section>
+        
+        {/* Section 2: Patient Directory - Appears after scroll */}
+        <section className="dashboard-directory-section">
+          <PatientDirectory patients={patients} />
+        </section>
+      </div>
+    </PageTransition>
   );
 };
 

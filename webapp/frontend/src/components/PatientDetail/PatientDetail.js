@@ -5,6 +5,7 @@ import AddReadingForm from '../AddReadingForm/AddReadingForm';
 import VitalSignsTrends from '../VitalSignsTrends/VitalSignsTrends';
 import PendingPrediction from '../PendingPrediction/PendingPrediction';
 import ReadingsHistory from '../ReadingsHistory/ReadingsHistory';
+import { PageTransition, StaggerContainer, FadeUpItem } from '../common/MotionWrappers';
 import './PatientDetail.css';
 
 const PatientDetail = () => {
@@ -121,31 +122,44 @@ const PatientDetail = () => {
 
 
   return (
-    <div className="patient-detail-container">
-      <div className="toolbar">
-        <Link to="/" className="back-button">&larr; Back to Dashboard</Link>
-        <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">+ Manual Entry</button>
+    <PageTransition>
+      <div className="patient-detail-container">
+        <div className="toolbar">
+          <Link to="/" className="back-button">&larr; Back to Dashboard</Link>
+          <button onClick={() => setIsModalOpen(true)} className="btn btn-primary">+ Manual Entry</button>
+        </div>
+
+        <StaggerContainer>
+          <FadeUpItem>
+            <PatientHeader patient={patient} />
+          </FadeUpItem>
+
+          <FadeUpItem>
+            <PendingPrediction 
+              reading={pendingReading} 
+              onRunPrediction={handleRunPrediction}
+              isPredicting={isPredicting} 
+            />
+          </FadeUpItem>
+
+          <FadeUpItem>
+            <VitalSignsTrends data={chartData} />
+          </FadeUpItem>
+
+          <FadeUpItem>
+            <ReadingsHistory 
+              readings={readingsForHistory} 
+            />
+          </FadeUpItem>
+        </StaggerContainer>
+
+        <AddReadingForm 
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleAddReading}
+        />
       </div>
-
-      <PatientHeader patient={patient} />
-
-      <PendingPrediction 
-        reading={pendingReading} 
-        onRunPrediction={handleRunPrediction}
-        isPredicting={isPredicting} 
-      />
-
-      <VitalSignsTrends data={chartData} />
-      <ReadingsHistory 
-        readings={readingsForHistory} 
-      />
-
-      <AddReadingForm 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddReading}
-      />
-    </div>
+    </PageTransition>
   );
 };
 
