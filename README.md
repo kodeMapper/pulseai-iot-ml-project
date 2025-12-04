@@ -1,12 +1,33 @@
 # 🏥 PulseAI – Maternal Health Risk Prediction System
 
-**Predicting maternal health risks using machine learning to save lives**
+**AI-powered maternal health risk assessment with a modern React dashboard**
 
 [![Model Accuracy](https://img.shields.io/badge/Accuracy-86.7%25-brightgreen)](https://github.com/kodeMapper/pulseai-iot-ml-project)
 [![High-Risk Recall](https://img.shields.io/badge/High--Risk%20Recall-94.5%25-blue)](https://github.com/kodeMapper/pulseai-iot-ml-project)
 [![Python](https://img.shields.io/badge/Python-3.12-blue)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-19.0-61dafb)](https://reactjs.org/)
 [![Model](https://img.shields.io/badge/Model-Gradient%20Boosting-orange)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com/kodeMapper/pulseai-iot-ml-project)
+
+---
+
+## 📋 Table of Contents
+
+- [What is PulseAI?](#-what-is-pulseai)
+- [The Problem We're Solving](#-the-problem-were-solving)
+- [Our Solution](#-our-solution)
+- [Web Dashboard Features](#-web-dashboard-features)
+- [How It Works](#-how-it-works---the-complete-journey)
+- [Model Performance](#-the-numbers---model-performance)
+- [Tech Stack](#️-technology-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+- [API Reference](#-api-reference)
+- [Key Features](#-key-features)
+- [Lessons Learned](#-important-lessons-learned)
+- [Future Improvements](#-future-improvements)
+- [Disclaimer](#️-disclaimer--ethics)
+- [Contributing](#-contributing)
 
 ---
 
@@ -59,7 +80,39 @@ PulseAI analyzes **6 simple health measurements** and predicts maternal health r
 
 ---
 
-## � How It Works - The Complete Journey
+## 🖥️ Web Dashboard Features
+
+PulseAI includes a modern, premium web dashboard built with React:
+
+### Dashboard UI
+- 🌙 **Dark Neon Theme** – Glassmorphism design with cyan/magenta accents
+- ✨ **Smooth Animations** – Framer Motion powered transitions and micro-interactions
+- 📱 **Scroll Snap Layout** – Hero section and patient directory with smooth navigation
+- 🎨 **Interactive Background** – Mouse-tracking grid effects
+
+### Patient Management
+- 👤 **Patient Profiles** – Add patients with name, age, and profile photo
+- 📸 **Photo Upload** – Auto-compression to ~500KB for optimal storage
+- ✏️ **Inline Editing** – Update patient name, age, and photo directly
+- 🗑️ **Delete Patients** – Remove patients with confirmation dialog
+- 🔍 **Search & Sort** – Filter patients by name, sort by name/age/date
+
+### Vital Signs & Predictions
+- 📊 **Trend Charts** – Visualize vital signs over time with Recharts
+- 📝 **Manual Entry** – Add readings via modal form
+- 🎯 **Risk Prediction** – One-click ML prediction for each reading
+- 📜 **Reading History** – View all past readings with risk levels
+
+### Patient Detail View
+- Large profile avatar (click to change photo)
+- Edit button for inline name/age editing
+- Pending prediction indicator
+- Vital signs trend visualization
+- Complete readings history table
+
+---
+
+## 🔄 How It Works - The Complete Journey
 
 Let me walk you through how we built this system, step by step:
 
@@ -174,28 +227,53 @@ Here's how all 7 models performed:
 
 ```
 pulseai-iot-ml-project/
-├── models/
-│   ├── best_gradient_boosting_final.pkl  # Trained Gradient Boosting model (86.7%)
-│   ├── best_scaler_final.pkl             # StandardScaler for feature scaling
-│   ├── model_metadata.json               # Model performance metrics
-│   └── Maternal_Health_Risk.csv          # Original dataset (1,014 patients)
+│
+├── models/                           # Trained ML models
+│   ├── best_gradient_boosting_final.pkl  # Production model (86.7%)
+│   ├── best_scaler_final.pkl             # Feature scaler
+│   ├── tuned_gradient_boosting.pkl       # Tuned model variant
+│   ├── model_metadata.json               # Model metrics
+│   └── risk_label_mapping.json           # Label encoding
+│
+├── src/                              # ML training modules
+│   ├── data_loading.py                   # Dataset loading
+│   ├── data_preprocessing.py             # Feature scaling
+│   ├── data_augmentation.py              # SMOTE balancing
+│   ├── model_trainer.py                  # Training pipeline
+│   ├── model_evaluator.py                # Metrics & evaluation
+│   ├── predictor.py                      # Inference utilities
+│   └── tuned_gradient_boosting.py        # Optimized GB training
 │
 ├── webapp/
 │   ├── backend/
-│   │   ├── app.py                   # Flask API server
-│   │   ├── requirements.txt         # Python dependencies
-│   │   └── .env                     # MongoDB connection string
+│   │   ├── app.py                        # Flask REST API
+│   │   └── requirements.txt              # Python dependencies
 │   │
 │   └── frontend/
-│       ├── src/                     # React components
-│       ├── public/                  # Static assets
-│       └── package.json             # Node.js dependencies
+│       ├── src/
+│       │   ├── components/
+│       │   │   ├── Dashboard/            # Main dashboard view
+│       │   │   ├── PatientDirectory/     # Patient grid with search
+│       │   │   ├── PatientDetail/        # Patient detail page
+│       │   │   ├── PatientHeader/        # Profile with edit
+│       │   │   ├── AddPatientForm/       # New patient modal
+│       │   │   ├── AddReadingForm/       # Add vital signs
+│       │   │   ├── VitalSignsTrends/     # Charts
+│       │   │   └── ReadingsHistory/      # Readings table
+│       │   ├── App.js                    # Main app component
+│       │   └── variables.css             # Theme & CSS variables
+│       └── package.json                  # Node dependencies
 │
-├── pulseai.py                       # Main training script
-├── demo_maternal.py                 # Interactive demo
-├── restart.bat                      # Launch both servers (Windows)
-├── final_model.md                   # Model development documentation
-└── README.md                        # This file
+├── scripts/                          # Utility scripts
+├── reports/                          # Generated reports (local)
+│
+├── dataset.csv                       # Training dataset
+├── maternal_health_risk.csv          # UCI dataset
+├── final_colab.ipynb                 # Jupyter notebook
+├── pulseai.py                        # Main training script
+├── demo_maternal.py                  # Interactive CLI demo
+├── requirements.txt                  # Root dependencies
+└── restart.bat                       # Launch both servers
 ```
 
 ## 🚀 Getting Started
@@ -273,6 +351,58 @@ python app.py
 cd webapp/frontend
 npm start
 ```
+
+---
+
+## 📡 API Reference
+
+### Base URL
+```
+http://localhost:5000/api
+```
+
+### Patient Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/patients` | List all patients |
+| POST | `/patients` | Create new patient |
+| GET | `/patients/:id` | Get patient by ID |
+| PUT | `/patients/:id` | Update patient (name, age) |
+| DELETE | `/patients/:id` | Delete patient |
+| PUT | `/patients/:id/photo` | Update patient photo |
+
+### Reading Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/patients/:id/readings` | Add vital signs reading |
+| PUT | `/readings/:id/predict` | Run ML prediction |
+
+### Example: Create Patient
+```json
+POST /api/patients
+{
+  "name": "Jane Doe",
+  "age": 28,
+  "photo": "data:image/jpeg;base64,..."  // optional
+}
+```
+
+### Example: Add Reading
+```json
+POST /api/patients/:id/readings
+{
+  "Age": 28,
+  "SystolicBP": 120,
+  "DiastolicBP": 80,
+  "BS": 7.5,
+  "BodyTemp": 98.6,
+  "HeartRate": 76
+}
+```
+
+---
 
 ### Using the Model Directly
 
@@ -441,7 +571,7 @@ print(f"Predicted Risk: {risk_map[prediction]}")
 
 - [`final_model.md`](final_model.md) - Detailed model development process and tuning analysis
 - [`MATERNAL_HEALTH_README.md`](MATERNAL_HEALTH_README.md) - Comprehensive technical documentation
-- [`SETUP_COMPLETE.md`](SETUP_COMPLETE.md) - Project completion summary
+- [`final_colab.ipynb`](final_colab.ipynb) - Jupyter notebook for experimentation
 
 ---
 
@@ -616,6 +746,6 @@ If you found this project useful, please consider giving it a ⭐ on GitHub!
 
 <div align="center">
 
-**Version**: 1.0.0 | **Last Updated**: October 2025 | **Status**: Production Ready ✅
+**Version**: 2.0.0 | **Last Updated**: December 2024 | **Status**: Production Ready ✅
 
 </div>

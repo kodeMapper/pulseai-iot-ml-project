@@ -9,6 +9,7 @@ import datetime
 import json
 import os
 import logging
+import base64
 
 # --- Logging Configuration ---
 # Ensure log file is created in the same directory as this script
@@ -343,6 +344,28 @@ def predict_direct():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/patients/<patient_id>', methods=['DELETE'])
+def delete_patient(patient_id):
+    """
+    Delete a patient and all their readings from the database.
+    """
+    patients_collection = mongo.db.patients
+    readings_collection = mongo.db.readings
+    
+    # Check if patient exists
+    patient = patients_collection.find_one({'_id': ObjectId(patient_id)})
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    
+    # Delete all readings for this patient
+    readings_collection.delete_many({'patient_id': patient_id})
+    
+    # Delete the patient
+    patients_collection.delete_one({'_id': ObjectId(patient_id)})
+    
+    return jsonify({"message": "Patient deleted successfully"}), 200
+
+
 @app.route('/api/patients', methods=['GET', 'POST'])
 def manage_patients():
     patients_collection = mongo.db.patients
@@ -394,6 +417,74 @@ def get_patient(patient_id):
     
     patient['readings'] = readings
     return jsonify(patient)
+
+
+@app.route('/api/patients/<patient_id>', methods=['PUT'])
+def update_patient(patient_id):
+    """
+    Update patient details (name, age, photo).
+    """
+    patients_collection = mongo.db.patients
+    
+    # Check if patient exists
+    patient = patients_collection.find_one({'_id': ObjectId(patient_id)})
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    
+    data = request.get_json()
+    
+    # Build update fields
+    update_fields = {}
+    if 'name' in data and data['name']:
+        update_fields['name'] = data['name'].strip()
+    if 'age' in data and data['age']:
+        update_fields['age'] = int(data['age'])
+    if 'photo' in data:
+        update_fields['photo'] = data['photo']
+    
+    if not update_fields:
+        return jsonify({"error": "No valid fields to update"}), 400
+    
+    # Update the patient
+    patients_collection.update_one(
+        {'_id': ObjectId(patient_id)},
+        {'$set': update_fields}
+    )
+    
+    # Return updated patient
+    updated_patient = patients_collection.find_one({'_id': ObjectId(patient_id)})
+    updated_patient['_id'] = str(updated_patient['_id'])
+    
+    return jsonify(updated_patient), 200
+
+
+@app.route('/api/patients/<patient_id>/photo', methods=['PUT'])
+def update_patient_photo(patient_id):
+    """
+    Update the profile photo for a patient.
+    Accepts either a base64 encoded image or a URL.
+    """
+    patients_collection = mongo.db.patients
+    
+    # Check if patient exists
+    patient = patients_collection.find_one({'_id': ObjectId(patient_id)})
+    if not patient:
+        return jsonify({"error": "Patient not found"}), 404
+    
+    data = request.get_json()
+    photo_data = data.get('photo')
+    
+    if not photo_data:
+        return jsonify({"error": "No photo data provided"}), 400
+    
+    # Update the patient's photo
+    patients_collection.update_one(
+        {'_id': ObjectId(patient_id)},
+        {'$set': {'photo': photo_data}}
+    )
+    
+    return jsonify({"message": "Photo updated successfully", "photo": photo_data}), 200
+
 
 @app.route('/api/patients/<patient_id>/readings', methods=['POST'])
 def add_reading(patient_id):
