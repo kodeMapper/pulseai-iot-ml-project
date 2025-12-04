@@ -746,6 +746,6 @@ If you found this project useful, please consider giving it a ⭐ on GitHub!
 
 <div align="center">
 
-**Version**: 2.0.0 | **Last Updated**: December 2024 | **Status**: Production Ready ✅
+**Version**: 2.0.0 | **Last Updated**: December 2024 | **Status**: Production Ready and Deployed ✅
 
 </div>
