@@ -28,15 +28,18 @@ app = Flask(__name__)
 
 # --- CORS Configuration for Production ---
 # Allow requests from Vercel frontend
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
 CORS(app, resources={
-    r"/api/*": {
+    r"/*": {
         "origins": [
             "http://localhost:3000",
-            "https://*.vercel.app",
-            os.getenv("FRONTEND_URL", "http://localhost:3000")
+            "http://127.0.0.1:3000",
+            "https://pulseai-frontend.vercel.app",
+            frontend_url
         ],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
     }
 })
 
