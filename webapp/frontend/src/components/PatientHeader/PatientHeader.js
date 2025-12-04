@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { getApiUrl } from '../../config/api';
 import './PatientHeader.css';
 
 const PatientHeader = ({ patient, onPhotoUpdate, onPatientUpdate }) => {
@@ -48,7 +49,7 @@ const PatientHeader = ({ patient, onPhotoUpdate, onPatientUpdate }) => {
 
     setIsSaving(true);
     try {
-      const response = await fetch(`/api/patients/${patient._id}`, {
+      const response = await fetch(getApiUrl(`/api/patients/${patient._id}`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ const PatientHeader = ({ patient, onPhotoUpdate, onPatientUpdate }) => {
       // Compress image automatically
       const photoData = await compressImage(file, 500);
       
-      const response = await fetch(`/api/patients/${patient._id}/photo`, {
+      const response = await fetch(getApiUrl(`/api/patients/${patient._id}/photo`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

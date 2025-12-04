@@ -5,6 +5,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import ErrorAlert from '../common/ErrorAlert';
 import ResultCard from '../common/ResultCard';
 import ModelInfoPanel from '../common/ModelInfoPanel';
+import { getApiUrl } from '../../config/api';
 import './PredictionPage.css';
 
 const PredictionPage = () => {
@@ -94,7 +95,7 @@ const PredictionPage = () => {
     setResult(null);
 
     try {
-      const response = await fetch('/api/predict', {
+      const response = await fetch(getApiUrl('/api/predict'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

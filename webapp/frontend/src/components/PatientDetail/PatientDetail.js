@@ -6,6 +6,7 @@ import VitalSignsTrends from '../VitalSignsTrends/VitalSignsTrends';
 import PendingPrediction from '../PendingPrediction/PendingPrediction';
 import ReadingsHistory from '../ReadingsHistory/ReadingsHistory';
 import { PageTransition, StaggerContainer, FadeUpItem } from '../common/MotionWrappers';
+import { getApiUrl } from '../../config/api';
 import './PatientDetail.css';
 
 const PatientDetail = () => {
@@ -27,7 +28,7 @@ const PatientDetail = () => {
 
   const fetchPatient = useCallback(async () => {
     try {
-      const response = await fetch(`/api/patients/${id}`);
+      const response = await fetch(getApiUrl(`/api/patients/${id}`));
       if (!response.ok) {
         throw new Error('Patient not found');
       }
@@ -44,7 +45,7 @@ const PatientDetail = () => {
   }, [fetchPatient]);
 
   const handleAddReading = async (reading) => {
-    const response = await fetch(`/api/patients/${id}/readings`, {
+    const response = await fetch(getApiUrl(`/api/patients/${id}/readings`), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ const PatientDetail = () => {
 
     setIsPredicting(true);
     try {
-      const response = await fetch(`/api/readings/${normalizedReadingId}/predict`, {
+      const response = await fetch(getApiUrl(`/api/readings/${normalizedReadingId}/predict`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

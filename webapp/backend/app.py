@@ -10,6 +10,10 @@ import json
 import os
 import logging
 import base64
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # --- Logging Configuration ---
 # Ensure log file is created in the same directory as this script
@@ -21,22 +25,42 @@ logging.basicConfig(level=logging.DEBUG,
                     handlers=[logging.FileHandler(log_file_path), logging.StreamHandler()])
 
 app = Flask(__name__)
-CORS(app)
+
+# --- CORS Configuration for Production ---
+# Allow requests from Vercel frontend
+CORS(app, resources={
+    r"/api/*": {
+        "origins": [
+            "http://localhost:3000",
+            "https://*.vercel.app",
+            os.getenv("FRONTEND_URL", "http://localhost:3000")
+        ],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # --- Database Configuration ---
-app.config["MONGO_URI"] = "mongodb+srv://admin:adminkapassword@cluster0.kgfpket.mongodb.net/PulseAi"
+app.config["MONGO_URI"] = os.getenv("MONGO_URI", "mongodb+srv://admin:adminkapassword@cluster0.kgfpket.mongodb.net/PulseAi")
 mongo = PyMongo(app)
 
 # --- ML Model Loading ---
 # Construct absolute paths to model files for robustness
-# The script_dir is webapp/backend
 script_dir = os.path.dirname(os.path.abspath(__file__))
-# We need to go up two levels to the project root 'PulseAi - ML project'
-project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
 
-# Updated to use the best Gradient Boosting model
-model_path = os.path.join(project_root, 'models', 'best_gradient_boosting_final.pkl')
-scaler_path = os.path.join(project_root, 'models', 'best_scaler_final.pkl')
+# For production deployment: models are in backend/models/
+# For local development: models can be in project root/models/
+local_model_path = os.path.join(script_dir, 'models', 'best_gradient_boosting_final.pkl')
+local_scaler_path = os.path.join(script_dir, 'models', 'best_scaler_final.pkl')
+
+# Fallback to project root for local development
+project_root = os.path.abspath(os.path.join(script_dir, '..', '..'))
+root_model_path = os.path.join(project_root, 'models', 'best_gradient_boosting_final.pkl')
+root_scaler_path = os.path.join(project_root, 'models', 'best_scaler_final.pkl')
+
+# Use local models if they exist (production), else use root models (development)
+model_path = local_model_path if os.path.exists(local_model_path) else root_model_path
+scaler_path = local_scaler_path if os.path.exists(local_scaler_path) else root_scaler_path
 
 model = None
 scaler = None
@@ -559,5 +583,13 @@ def predict_for_reading(reading_id):
     return jsonify(updated_reading)
 
 
+# Health check endpoint for deployment
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({"status": "healthy", "service": "PulseAI Backend"})
+
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.getenv("PORT", 5000))
+    debug = os.getenv("FLASK_ENV", "development") == "development"
+    app.run(debug=debug, host='0.0.0.0', port=port)

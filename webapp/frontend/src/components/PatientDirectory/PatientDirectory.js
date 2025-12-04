@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { StaggerContainer, FadeUpItem, GlowCard, TextReveal } from '../common/MotionWrappers';
+import { getApiUrl } from '../../config/api';
 import './PatientDirectory.css';
 
 const normalizeTimestamp = (value) => {
@@ -30,7 +31,7 @@ const PatientDirectory = ({ patients, onDeletePatient }) => {
     setDeletingId(patientId);
     
     try {
-      const response = await fetch(`/api/patients/${patientId}`, {
+      const response = await fetch(getApiUrl(`/api/patients/${patientId}`), {
         method: 'DELETE',
       });
       

@@ -4,13 +4,14 @@ import Summary from '../Summary/Summary';
 import PatientDirectory from '../PatientDirectory/PatientDirectory';
 import AddPatientForm from '../AddPatientForm/AddPatientForm';
 import { PageTransition, StaggerContainer, FadeUpItem } from '../common/MotionWrappers';
+import { getApiUrl } from '../../config/api';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const [patients, setPatients] = useState([]);
 
   const fetchPatients = async () => {
-    const response = await fetch('/api/patients');
+    const response = await fetch(getApiUrl('/api/patients'));
     const data = await response.json();
     setPatients(data);
   };
@@ -20,7 +21,7 @@ const Dashboard = () => {
   }, []);
 
   const handleAddPatient = async (patient) => {
-    const response = await fetch('/api/patients', {
+    const response = await fetch(getApiUrl('/api/patients'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
