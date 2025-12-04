@@ -1,9 +1,14 @@
 // API configuration for production/development
-const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+// In production (Vercel), use the Render backend URL
+// In development, the proxy in package.json handles routing
+
+const PRODUCTION_API_URL = 'https://pulseai-backend-7xlo.onrender.com';
+
+// Use environment variable if set, otherwise use production URL in production build
+const API_BASE_URL = process.env.REACT_APP_API_URL || 
+  (process.env.NODE_ENV === 'production' ? PRODUCTION_API_URL : '');
 
 export const getApiUrl = (path) => {
-  // In development, proxy handles the routing (empty base)
-  // In production, use the full backend URL
   return `${API_BASE_URL}${path}`;
 };
 
