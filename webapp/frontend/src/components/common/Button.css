@@ -46,8 +46,10 @@
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #F5F5F5;
-  border-color: var(--color-text-secondary);
+  background-color: rgba(0, 242, 255, 0.1);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
 }
 
 .btn-secondary:active:not(:disabled) {
