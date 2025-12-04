@@ -50,8 +50,21 @@ const VitalSignsTrends = ({ data }) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
-            <Tooltip formatter={tooltipFormatter} cursor={{ strokeDasharray: '3 3' }} />
-            <Legend wrapperStyle={{ paddingTop: 8 }} />
+            <Tooltip 
+              formatter={tooltipFormatter} 
+              cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.2)' }}
+              contentStyle={{
+                backgroundColor: 'rgba(18, 18, 18, 0.9)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '8px',
+                color: '#fff',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+              }}
+              itemStyle={{ color: '#fff' }}
+              labelStyle={{ color: '#aaa', marginBottom: '5px' }}
+            />
+            <Legend wrapperStyle={{ paddingTop: 8, color: '#fff' }} />
 
             {/* Reference lines for common thresholds */}
             <ReferenceLine y={120} stroke="#7c3aed" strokeDasharray="6 6" ifOverflow="extendDomain" />

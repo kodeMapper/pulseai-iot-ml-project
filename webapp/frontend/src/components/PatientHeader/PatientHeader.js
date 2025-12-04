@@ -13,6 +13,22 @@ const PatientHeader = ({ patient }) => {
     return names[0][0];
   };
 
+  const renderPatientDetails = () => {
+    const details = [];
+    
+    if (patient.patient_id) details.push(`ID: ${patient.patient_id}`);
+    if (patient.age) details.push(`${patient.age} years`);
+    if (patient.gender) details.push(patient.gender);
+    if (patient.contact) details.push(patient.contact);
+
+    return details.map((detail, index) => (
+      <React.Fragment key={index}>
+        <span>{detail}</span>
+        {index < details.length - 1 && <span>&bull;</span>}
+      </React.Fragment>
+    ));
+  };
+
   return (
     <div className="patient-header-card">
       <div className="patient-avatar">
@@ -21,13 +37,7 @@ const PatientHeader = ({ patient }) => {
       <div className="patient-info">
         <h1>{patient.name}</h1>
         <p>
-          <span>ID: {patient.patient_id}</span>
-          <span>&bull;</span>
-          <span>{patient.age} years</span>
-          <span>&bull;</span>
-          <span>{patient.gender}</span>
-          <span>&bull;</span>
-          <span>{patient.contact}</span>
+          {renderPatientDetails()}
         </p>
       </div>
     </div>

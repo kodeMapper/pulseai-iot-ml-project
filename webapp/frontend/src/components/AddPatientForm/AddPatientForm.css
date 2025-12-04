@@ -1,6 +1,9 @@
 /* Add New Patient Section - Simple & Clean */
 .add-patient-section {
-  background: var(--color-surface);
+  background: var(--color-surface-glass);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border: var(--border-glass);
   padding: var(--space-lg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -9,10 +12,11 @@
 
 .section-title {
   margin: 0 0 var(--space-md) 0;
-  font-family: var(--font-primary);
+  font-family: var(--font-display);
   font-size: var(--font-size-h3);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
+  letter-spacing: -0.5px;
 }
 
 .patient-form {
@@ -34,16 +38,20 @@
 
 .form-field input {
   padding: 12px 14px;
-  border: 1px solid var(--color-border);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-small);
   font-family: var(--font-primary);
-  transition: border-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .form-field input:focus {
   outline: none;
   border-color: var(--color-primary);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
 }
 
 .form-field input.error {
@@ -62,19 +70,21 @@
 
 .add-btn {
   padding: 12px 20px;
-  background-color: var(--color-primary);
+  background: var(--gradient-primary);
   color: var(--color-white);
   border: none;
   border-radius: var(--radius-sm);
   font-size: var(--font-size-small);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-bold);
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
   white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2);
 }
 
 .add-btn:hover {
-  background-color: var(--color-primary-dark);
+  box-shadow: 0 6px 20px rgba(0, 242, 255, 0.4);
+  transform: translateY(-1px);
 }
 
 .add-btn:active {

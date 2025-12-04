@@ -1,9 +1,7 @@
-body {
-  background-color: #f8fafc;
-}
+/* Removed body background override to use global dark theme */
 
 .patient-detail-container {
-  padding: 24px;
+  padding: var(--space-lg);
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -12,38 +10,53 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
 }
 
 .back-button {
   text-decoration: none;
-  color: #4f46e5;
-  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
+  transition: color var(--transition-fast);
+}
+
+.back-button:hover {
+  color: var(--color-primary);
 }
 
 .btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--border-radius-md);
   cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
 }
 
 .btn-primary {
-  background-color: #4f46e5;
-  color: white;
+  background: var(--gradient-primary);
+  color: var(--color-white);
+  box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 242, 255, 0.5);
+  transform: translateY(-1px);
 }
 
 .real-time-section {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 24px;
+    background-color: var(--color-surface-glass);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: var(--border-glass);
+    border-radius: var(--border-radius-lg);
+    padding: var(--space-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--space-lg);
 }
 
 .section-header {
@@ -55,8 +68,8 @@ body {
 
 .section-header h3 {
     margin: 0;
-    color: #1e293b;
-    font-weight: 600;
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-semibold);
 }
 
 .actions {
@@ -65,13 +78,18 @@ body {
 }
 
 .btn-secondary {
-  background-color: #e2e8f0;
-  color: #334155;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .loading-container {
   text-align: center;
   padding: 50px;
   font-size: 18px;
-  color: #64748b;
+  color: var(--color-text-secondary);
 }

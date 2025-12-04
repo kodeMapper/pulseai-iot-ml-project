@@ -3,10 +3,13 @@
    =================================== */
 
 .navbar {
-  background-color: var(--color-primary);
+  background-color: var(--color-surface-glass);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: var(--border-glass);
   padding: var(--space-md) var(--space-xl);
   color: var(--color-white);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -26,10 +29,11 @@
 
 .navbar-brand:hover {
   transform: scale(1.02);
+  text-shadow: var(--shadow-glow);
 }
 
 .navbar-brand:focus-visible {
-  outline: 2px solid var(--color-white);
+  outline: 2px solid var(--color-primary);
   outline-offset: 4px;
   border-radius: var(--border-radius-sm);
 }
@@ -38,11 +42,12 @@
   font-size: 32px;
   line-height: 1;
   animation: pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5)); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.8)); }
 }
 
 .navbar-title {
@@ -50,20 +55,21 @@
   font-size: var(--font-size-xxl);
   font-weight: var(--font-weight-bold);
   letter-spacing: -0.5px;
-  background: linear-gradient(90deg, #fff 0%, #e0f2ff 50%, #c7f0ff 100%);
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  text-shadow: none;
 }
 
 .navbar-tagline {
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-regular);
-  opacity: 0.9;
+  opacity: 0.7;
   margin-left: var(--space-xs);
   padding-left: var(--space-xs);
-  border-left: 2px solid rgba(255, 255, 255, 0.3);
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
 }
 
 /* Navigation Links */
@@ -74,28 +80,41 @@
 }
 
 .navbar-link {
-  color: var(--color-white);
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-medium);
   padding: var(--space-sm) var(--space-md);
   border-radius: var(--border-radius-sm);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  border: 1px solid transparent;
 }
 
 .navbar-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-link:focus-visible {
-  outline: 2px solid var(--color-white);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 /* Primary Action Link */
 .navbar-link-primary {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 242, 255, 0.1);
+  color: var(--color-primary);
+  border: 1px solid rgba(0, 242, 255, 0.3);
   font-weight: var(--font-weight-semibold);
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.1);
+}
+
+.navbar-link-primary:hover {
+  background: rgba(0, 242, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+  color: var(--color-white);
+  border-color: var(--color-primary);
 }
 
 .navbar-link-primary:hover {
